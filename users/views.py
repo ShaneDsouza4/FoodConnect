@@ -14,45 +14,57 @@ def landing_view(request):
 
 def signup_view(request):
     if request.method == 'POST':
+
+        # Basic user info
         username = request.POST.get('username')
         first_name = request.POST.get('first_name')
         last_name = request.POST.get('last_name')
         email = request.POST.get('email')
         password = request.POST.get('password')
+
+        # Profile info
+        role = request.POST.get('role')
+        phone_number = request.POST.get('phone_number')
+        street_address = request.POST.get('street_address')
+        city = request.POST.get('city')
+        state = request.POST.get('state')
+        country = request.POST.get('country')
         id_verification = request.FILES.get('id_verification')
 
-        # Check if username or email already exists
-        existing_user = User.objects.filter(Q(username=username) | Q(email=email)).first()
+        # Role based fields
+        restaurant_name = request.POST.get('restaurant_name')
+        restaurant_contact_number = request.POST.get('restaurant_contact_number')
+        foodbank_name = request.POST.get('foodbank_name')
+        foodbank_contact_number = request.POST.get('foodbank_contact_number')
 
-        if existing_user:
-            # Determine the specific error message
-            if existing_user.username == username:
-                error_message = "A user with this username already exists."
-            else:
-                error_message = "A user with this email already exists."
-            return render(request, 'users/signup.html', {
-                'error_message': error_message,
-                'username': username,
-                'first_name': first_name,
-                'last_name': last_name,
-                'email': email,
-            })
+        # Check for existing username or email
+        if User.objects.filter(username=username).exists() or User.objects.filter(email=email).exists():
+            messages.error(request, "A user with that username or email already exists.")
+            return render(request, 'users/signup.html', request.POST)
 
-        # Create the user
-        user = User.objects.create_user(
-            username=username,
-            first_name=first_name,
-            last_name=last_name,
-            email=email,
-            password=password,
-        )
+        # Create the User and Profile
+        user = User.objects.create_user(username=username, first_name=first_name, last_name=last_name, email=email,
+                                        password=password)
 
-        # Update profile with ID verification if provided
-        if id_verification:
-            user.profile.id_verification = id_verification
-            user.profile.save()
+        # Updating the Profile with role specific data
+        profile = user.profile
+        profile.role = role
+        profile.phone_number = phone_number
+        profile.street_address = street_address
+        profile.city = city
+        profile.state = state
+        profile.country = country
+        profile.id_verification = id_verification
 
-        # Redirect to home after successful signup
+        # Save role specific fields based on selected role
+        if role == 'restaurant':
+            profile.restaurant_name = restaurant_name
+            profile.restaurant_contact_number = restaurant_contact_number
+        elif role == 'foodbank':
+            profile.foodbank_name = foodbank_name
+            profile.foodbank_contact_number = foodbank_contact_number
+
+        profile.save()
         return redirect('home')
 
     return render(request, 'users/signup.html')
