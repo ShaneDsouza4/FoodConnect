@@ -6,6 +6,7 @@ from .models import Profile
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib import messages
 from django.contrib.auth import logout
+from django.db.models import Q
 
 def landing_view(request):
     return render(request, 'users/landing.html')
@@ -20,29 +21,39 @@ def signup_view(request):
         password = request.POST.get('password')
         id_verification = request.FILES.get('id_verification')
 
-        try:
-            # Create the user
-            user = User.objects.create_user(
-                username=username,
-                first_name=first_name,
-                last_name=last_name,
-                email=email,
-                password=password,
-            )
+        # Check if username or email already exists
+        existing_user = User.objects.filter(Q(username=username) | Q(email=email)).first()
 
+        if existing_user:
+            # Determine the specific error message
+            if existing_user.username == username:
+                error_message = "A user with this username already exists."
+            else:
+                error_message = "A user with this email already exists."
+            return render(request, 'users/signup.html', {
+                'error_message': error_message,
+                'username': username,
+                'first_name': first_name,
+                'last_name': last_name,
+                'email': email,
+            })
 
-            if id_verification:
-                user.profile.id_verification = id_verification
-                user.profile.save()
+        # Create the user
+        user = User.objects.create_user(
+            username=username,
+            first_name=first_name,
+            last_name=last_name,
+            email=email,
+            password=password,
+        )
 
-            # Redirect to home page after successful signup
-            return redirect('home')
+        # Update profile with ID verification if provided
+        if id_verification:
+            user.profile.id_verification = id_verification
+            user.profile.save()
 
-        except Exception as e:
-            # Log any unexpected errors
-            #logger.error("Unexpected error occurred during signup: %s", e)
-            error_message = "An unexpected error occurred. Please try again."
-            return render(request, 'users/signup.html', {'error_message': error_message})
+        # Redirect to home after successful signup
+        return redirect('home')
 
     return render(request, 'users/signup.html')
 
