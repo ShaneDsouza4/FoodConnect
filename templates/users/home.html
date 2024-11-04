@@ -5,10 +5,17 @@
     <title>Home | FoodConnect</title>
 </head>
 <body>
-    <h1>Welcome to the Home Page</h1>
-    <p>You're logged in! Enjoy using FoodConnect.</p>
+    <h1>Welcome to FoodConnect, {{ request.user.username }}</h1>
 
-    <!-- Logout Button -->
+    {% if role == "foodbank" %}
+        <!-- Emergency Alert button for Foodbanks only -->
+        <button onclick="location.href='{% url 'emergency_alert' %}'">Emergency Alert</button>
+    {% else %}
+        <!-- Donate button for users who are not Foodbanks -->
+        <button onclick="location.href='{% url 'donate' %}'">Donate</button>
+    {% endif %}
+
     <p><a href="{% url 'logout' %}">Log Out</a></p>
+
 </body>
 </html>

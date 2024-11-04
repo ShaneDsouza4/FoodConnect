@@ -7,6 +7,7 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib import messages
 from django.contrib.auth import logout
 from django.db.models import Q
+from django.contrib.auth.decorators import login_required
 
 def landing_view(request):
     return render(request, 'users/landing.html')
@@ -92,9 +93,22 @@ def login_view(request):
     return render(request, 'users/login.html', {'form': form})
 
 def home_view(request):
-    return render(request, 'users/home.html')
+    role = request.user.profile.role #Access user profile to get the role
+    return render(request, 'users/home.html', {'role': role})
 
 
 def logout_view(request):
     logout(request)
     return redirect('landing')  # Redirect to the landing page
+
+
+
+@login_required
+def emergency_alert_view(request):
+    # Implement the emergency alert functionality here
+    return render(request, 'users/emergency_alert.html')
+
+@login_required
+def donate_view(request):
+    # Implement the donate functionality here
+    return render(request, 'users/donate.html')
