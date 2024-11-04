@@ -2,6 +2,8 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
 from django.contrib.auth import login, authenticate
 from django.db import IntegrityError
+
+from alerts.models import EmergencyAlert
 from .models import Profile
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib import messages
@@ -92,9 +94,14 @@ def login_view(request):
 
     return render(request, 'users/login.html', {'form': form})
 
+
 def home_view(request):
-    role = request.user.profile.role #Access user profile to get the role
-    return render(request, 'users/home.html', {'role': role})
+    role = request.user.profile.role
+    latest_alert = EmergencyAlert.objects.order_by('-created_at').first()
+    return render(request, 'users/home.html', {
+        'role': role,
+        'latest_alert': latest_alert
+    })
 
 
 def logout_view(request):

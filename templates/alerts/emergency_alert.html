@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Emergency Alert</title>
+</head>
+<body>
+    <h1>Submit an Emergency Alert</h1>
+
+    <!-- Display success or error messages -->
+    {% if messages %}
+        {% for message in messages %}
+            <p style="color: {% if message.tags == 'error' %}red{% else %}green{% endif %};">
+                {{ message }}
+            </p>
+        {% endfor %}
+    {% endif %}
+
+    <form method="POST">
+        {% csrf_token %}
+        <label for="message">Describe the Emergency (optional):</label>
+        <textarea name="message" id="message" rows="4" placeholder="Enter details here..."></textarea>
+        <button type="submit">Submit Alert</button>
+    </form>
+</body>
+</html>

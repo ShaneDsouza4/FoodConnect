@@ -3,8 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <title>Home | FoodConnect</title>
+    <style>
+        
+        .alert-banner {
+            background-color: #ffcccc;
+            color: #a94442;
+            padding: 10px;
+            text-align: center;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+    </style>
 </head>
 <body>
+    <!-- Emergency Alert Banner -->
+    {% if latest_alert %}
+        <div class="alert-banner">
+            Emergency Alert: {{ latest_alert.message }} 
+            (Submitted by {{ latest_alert.user.username }} on {{ latest_alert.created_at|date:"F j, Y, g:i a" }})
+        </div>
+    {% endif %}
+
     <h1>Welcome to FoodConnect, {{ request.user.username }}</h1>
 
     {% if role == "foodbank" %}
@@ -16,6 +35,5 @@
     {% endif %}
 
     <p><a href="{% url 'logout' %}">Log Out</a></p>
-
 </body>
 </html>
