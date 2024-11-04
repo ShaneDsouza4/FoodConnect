@@ -3,6 +3,9 @@ from django.contrib.auth.models import User
 from django.contrib.auth import login, authenticate
 from django.db import IntegrityError
 from .models import Profile
+from django.contrib.auth.forms import AuthenticationForm
+from django.contrib import messages
+from django.contrib.auth import logout
 
 def landing_view(request):
     return render(request, 'users/landing.html')
@@ -27,7 +30,7 @@ def signup_view(request):
                 password=password,
             )
 
-            # Update the profile with ID verification file if provided
+
             if id_verification:
                 user.profile.id_verification = id_verification
                 user.profile.save()
@@ -43,7 +46,32 @@ def signup_view(request):
 
     return render(request, 'users/signup.html')
 
+def login_view(request):
+    if request.user.is_authenticated:
+        return redirect('home')  # Redirect already logged-in users to the home page
 
+    if request.method == 'POST':
+        form = AuthenticationForm(request, data=request.POST)
+        if form.is_valid():
+            username = form.cleaned_data.get('username')
+            password = form.cleaned_data.get('password')
+            user = authenticate(username=username, password=password)
+            if user is not None:
+                login(request, user)
+                return redirect('home')  # Redirect to home page after login
+            else:
+                messages.error(request, "Invalid username or password.")
+        else:
+            messages.error(request, "Invalid username or password.")
+    else:
+        form = AuthenticationForm()
+
+    return render(request, 'users/login.html', {'form': form})
 
 def home_view(request):
     return render(request, 'users/home.html')
+
+
+def logout_view(request):
+    logout(request)
+    return redirect('landing')  # Redirect to the landing page
