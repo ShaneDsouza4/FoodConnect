@@ -1,0 +1,38 @@
+# General file from stackoverflow
+
+# Byte-compiled  files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Virtual environments
+venv/
+.venv/
+
+# Django files
+db.sqlite3
+#media/      # User-uploaded files
+*.log       # Log files
+
+# Environment variables
+.env        # If you use a .env file to store environment variables
+
+# Ignore IDE specific files
+.idea/             # PyCharm
+.vscode/           # Visual Studio Code
+
+# MacOS files
+.DS_Store
+
+# Python packages
+*.egg
+*.egg-info/
+dist/
+build/
+*.egg-info
+
+# AWS or other cloud credentials (if any)
+.aws/
