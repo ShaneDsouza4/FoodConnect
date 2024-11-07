@@ -14,10 +14,8 @@ from django.contrib.auth.decorators import login_required
 def landing_view(request):
     return render(request, 'users/landing.html')
 
-
 def signup_view(request):
     if request.method == 'POST':
-
         # Basic user info
         username = request.POST.get('username')
         first_name = request.POST.get('first_name')
@@ -43,32 +41,40 @@ def signup_view(request):
         # Check for existing username or email
         if User.objects.filter(username=username).exists() or User.objects.filter(email=email).exists():
             messages.error(request, "A user with that username or email already exists.")
-            return render(request, 'users/signup.html', request.POST)
+            return render(request, 'users/signup.html', {'form_data': request.POST})
 
-        # Create the User and Profile
-        user = User.objects.create_user(username=username, first_name=first_name, last_name=last_name, email=email,
-                                        password=password)
+        try:
+            # Create the User
+            user = User.objects.create_user(username=username, first_name=first_name, last_name=last_name, email=email,
+                                            password=password)
 
-        # Updating the Profile with role specific data
-        profile = user.profile
-        profile.role = role
-        profile.phone_number = phone_number
-        profile.street_address = street_address
-        profile.city = city
-        profile.state = state
-        profile.country = country
-        profile.id_verification = id_verification
+            # Create and populate the Profile manually
+            profile = Profile.objects.create(
+                user=user,
+                role=role,
+                phone_number=phone_number,
+                street_address=street_address,
+                city=city,
+                state=state,
+                country=country,
+                id_verification=id_verification,
+                restaurant_name=restaurant_name if role == 'restaurant' else '',
+                restaurant_contact_number=restaurant_contact_number if role == 'restaurant' else '',
+                foodbank_name=foodbank_name if role == 'foodbank' else '',
+                foodbank_contact_number=foodbank_contact_number if role == 'foodbank' else ''
+            )
+            profile.save()
 
-        # Save role specific fields based on selected role
-        if role == 'restaurant':
-            profile.restaurant_name = restaurant_name
-            profile.restaurant_contact_number = restaurant_contact_number
-        elif role == 'foodbank':
-            profile.foodbank_name = foodbank_name
-            profile.foodbank_contact_number = foodbank_contact_number
+            # Clear any previous messages
+            for message in messages.get_messages(request):
+                message.used = True
 
-        profile.save()
-        return redirect('home')
+            messages.success(request, "Signup successful! Please log in.")
+            return redirect('login')  # Redirect to login after successful signup
+
+        except IntegrityError:
+            messages.error(request, "An error occurred during signup. Please try again.")
+            return render(request, 'users/signup.html', {'form_data': request.POST})
 
     return render(request, 'users/signup.html')
 
@@ -94,7 +100,7 @@ def login_view(request):
 
     return render(request, 'users/login.html', {'form': form})
 
-
+@login_required
 def home_view(request):
     role = request.user.profile.role
     latest_alert = EmergencyAlert.objects.order_by('-created_at').first()
@@ -103,12 +109,9 @@ def home_view(request):
         'latest_alert': latest_alert
     })
 
-
 def logout_view(request):
     logout(request)
     return redirect('landing')  # Redirect to the landing page
-
-
 
 @login_required
 def emergency_alert_view(request):
