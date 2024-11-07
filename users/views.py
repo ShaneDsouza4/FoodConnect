@@ -23,7 +23,7 @@ def signup_view(request):
         email = request.POST.get('email')
         password = request.POST.get('password')
 
-        # Profile info
+        # Profile info (to be filled after creation)
         role = request.POST.get('role')
         phone_number = request.POST.get('phone_number')
         street_address = request.POST.get('street_address')
@@ -32,37 +32,36 @@ def signup_view(request):
         country = request.POST.get('country')
         id_verification = request.FILES.get('id_verification')
 
-        # Role based fields
-        restaurant_name = request.POST.get('restaurant_name')
-        restaurant_contact_number = request.POST.get('restaurant_contact_number')
-        foodbank_name = request.POST.get('foodbank_name')
-        foodbank_contact_number = request.POST.get('foodbank_contact_number')
-
         # Check for existing username or email
         if User.objects.filter(username=username).exists() or User.objects.filter(email=email).exists():
             messages.error(request, "A user with that username or email already exists.")
             return render(request, 'users/signup.html', {'form_data': request.POST})
 
         try:
-            # Create the User
-            user = User.objects.create_user(username=username, first_name=first_name, last_name=last_name, email=email,
-                                            password=password)
-
-            # Create and populate the Profile manually
-            profile = Profile.objects.create(
-                user=user,
-                role=role,
-                phone_number=phone_number,
-                street_address=street_address,
-                city=city,
-                state=state,
-                country=country,
-                id_verification=id_verification,
-                restaurant_name=restaurant_name if role == 'restaurant' else '',
-                restaurant_contact_number=restaurant_contact_number if role == 'restaurant' else '',
-                foodbank_name=foodbank_name if role == 'foodbank' else '',
-                foodbank_contact_number=foodbank_contact_number if role == 'foodbank' else ''
+            # Create the User (signals.py will create Profile)
+            user = User.objects.create_user(
+                username=username,
+                first_name=first_name,
+                last_name=last_name,
+                email=email,
+                password=password
             )
+
+            # Populate the profile fields post-creation
+            profile = user.profile
+            profile.role = role
+            profile.phone_number = phone_number
+            profile.street_address = street_address
+            profile.city = city
+            profile.state = state
+            profile.country = country
+            profile.id_verification = id_verification
+
+            if role == 'restaurant':
+                profile.restaurant_name = request.POST.get('restaurant_name')
+            elif role == 'foodbank':
+                profile.foodbank_name = request.POST.get('foodbank_name')
+
             profile.save()
 
             # Clear any previous messages
