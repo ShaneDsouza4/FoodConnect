@@ -25,6 +25,7 @@
         <p>Last Name: <input type="text" name="last_name" required></p>
         <p>Email: <input type="email" name="email" required></p>
         <p>Password: <input type="password" name="password" required></p>
+        
         <p>Role:
             <select id="role" name="role" onchange="showRoleSpecificFields()" required>
                 <option value="individual">Individual</option>
@@ -32,21 +33,39 @@
                 <option value="foodbank">Foodbank</option>
             </select>
         </p>
-        
+
         <!-- Role-specific fields -->
         <div id="restaurant-fields" style="display: none;">
             <p>Restaurant Name: <input type="text" name="restaurant_name"></p>
-            <p>Restaurant Contact Number: <input type="text" name="restaurant_contact_number"></p>
         </div>
         <div id="foodbank-fields" style="display: none;">
             <p>Foodbank Name: <input type="text" name="foodbank_name"></p>
-            <p>Foodbank Contact Number: <input type="text" name="foodbank_contact_number"></p>
         </div>
 
         <p>Phone Number: <input type="text" name="phone_number"></p>
         <p>Street Address: <input type="text" name="street_address"></p>
         <p>City: <input type="text" name="city"></p>
-        <p>State: <input type="text" name="state"></p>
+
+        <!-- State Dropdown -->
+        <p>State:
+            <select name="state" required>
+                <option value="">Select a state</option>
+                <option value="AB">Alberta</option>
+                <option value="BC">British Columbia</option>
+                <option value="MB">Manitoba</option>
+                <option value="NB">New Brunswick</option>
+                <option value="NL">Newfoundland and Labrador</option>
+                <option value="NS">Nova Scotia</option>
+                <option value="ON">Ontario</option>
+                <option value="PE">Prince Edward Island</option>
+                <option value="QC">Quebec</option>
+                <option value="SK">Saskatchewan</option>
+                <option value="NT">Northwest Territories</option>
+                <option value="NU">Nunavut</option>
+                <option value="YT">Yukon</option>
+            </select>
+        </p>
+
         <p>Country: <input type="text" name="country"></p>
         <p>ID Verification (Upload): <input type="file" name="id_verification"></p>
         <button type="submit">Sign Up</button>
