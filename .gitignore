@@ -34,5 +34,7 @@ dist/
 build/
 *.egg-info
 
+.env
+
 # AWS or other cloud credentials (if any)
 .aws/
