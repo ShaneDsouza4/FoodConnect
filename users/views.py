@@ -12,7 +12,8 @@ from django.db.models import Q
 from django.contrib.auth.decorators import login_required
 
 def landing_view(request):
-    return render(request, 'users/landing.html')
+    return render(request, 'webpages/index.html')
+    #return render(request, 'users/landing.html')
 
 def signup_view(request):
     if request.method == 'POST':

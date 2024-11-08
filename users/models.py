@@ -49,7 +49,7 @@ class Profile(models.Model):
     average_rating = models.FloatField(blank=True, null=True)  # Average rating from feedback
     response_to_emergency_count = models.IntegerField(default=0)  # Times responded to emergency alerts
 
-    # Foodbank-specific fields
+    # Foodbank
     foodbank_name = models.CharField(max_length=255, blank=True, null=True)
     total_reservations = models.IntegerField(default=0)
     emergency_alerts_count = models.IntegerField(default=0)
