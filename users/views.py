@@ -1,13 +1,14 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
-from django.contrib.auth import login, authenticate
+from django.contrib.auth import login, authenticate, logout
 from django.db import IntegrityError
+from django.contrib import messages
 
 from alerts.models import EmergencyAlert
 from .models import Profile
 from django.contrib.auth.forms import AuthenticationForm
-from django.contrib import messages
-from django.contrib.auth import logout
+
+
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
 
@@ -17,6 +18,27 @@ def landing_view(request):
 
 def about_view(request):
     return render(request, 'webpages/about.html')
+
+def login_user(request):
+    if request.method == 'POST':
+        username = request.POST['username']
+        password = request.POST['password']
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            login(request, user)
+            messages.success(request, 'You are now logged in')
+            return redirect('landing')
+        else:
+            messages.success(request, 'There was an Error, please try again.')
+            return redirect('login')
+    else:
+        return render(request, 'webpages/login.html')
+
+def logout_user(request):
+    logout(request)
+    messages.success(request, 'You have been logged out.')
+    return redirect('landing')
+
 
 def signup_view(request):
     if request.method == 'POST':
