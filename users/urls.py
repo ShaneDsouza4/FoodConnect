@@ -1,9 +1,11 @@
 from django.urls import path
-from .views import signup_view, home_view, landing_view, login_view, logout_view, emergency_alert_view, donate_view
+from .views import signup_view, home_view, landing_view, login_view, logout_view, emergency_alert_view, donate_view, \
+    about_view
 from django.contrib.auth import views as auth_views
 urlpatterns = [
     path('', landing_view, name='landing'),
     path('home/', home_view, name='home'),
+    path('about/', about_view, name='about'),
     path('signup/', signup_view, name='signup'),
 
     path('login/', login_view, name='login'),

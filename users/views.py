@@ -15,6 +15,9 @@ def landing_view(request):
     return render(request, 'webpages/index.html')
     #return render(request, 'users/landing.html')
 
+def about_view(request):
+    return render(request, 'webpages/about.html')
+
 def signup_view(request):
     if request.method == 'POST':
         # Basic user info
