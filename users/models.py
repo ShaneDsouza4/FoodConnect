@@ -66,7 +66,7 @@ class Restaurant(models.Model):
     def __str__(self):
         return f"{self.user.username} - {self.restaurant_name}"
 
-# Foodbannk
+# Foodbank
 class FoodBank(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='foodbank')
     foodbank_name = models.CharField(max_length=255)
