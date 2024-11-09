@@ -112,3 +112,22 @@ class Restaurant(models.Model):
     def __str__(self):
         return f"{self.user.username} - {self.restaurant_name}"
 
+# Foodbannk
+class FoodBank(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='foodbank')
+    foodbank_name = models.CharField(max_length=255)
+    foodbank_phone = models.CharField(max_length=20)
+    email = models.EmailField(unique=True)
+    street = models.CharField(max_length=255)
+    city = models.CharField(max_length=100)
+    state = models.CharField(max_length=100)
+    country = models.CharField(max_length=100)
+    postal_code = models.CharField(max_length=20)
+    website = models.URLField(blank=True, null=True)
+    id_verification = models.ImageField(upload_to='id_cards/', blank=True, null=True)
+    is_verified = models.BooleanField(default=False)
+    emergency_alerts_count = models.IntegerField(default=0)
+
+    def __str__(self):
+        return f"{self.user.username}'s Food Bank"
+

@@ -90,3 +90,20 @@ class CreateRestaurantForm(forms.Form):
 		widget=forms.ClearableFileInput(attrs={'class': 'form-control'})
 	)
 
+# Foodbank Form
+class CreateFoodBankForm(forms.Form):
+    username = forms.CharField(label="Username", max_length=150, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Username'}))
+    password = forms.CharField(label="Password", widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Password'}))
+    foodbank_name = forms.CharField(label="Food Bank Name", max_length=255, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Food Bank Name'}))
+    foodbank_phone = forms.CharField(label="Phone Number", max_length=20, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Phone Number'}))
+    email = forms.EmailField(label="Email Address", widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Email Address'}))
+    street = forms.CharField(label="Street Address", max_length=255, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Street'}))
+    city = forms.CharField(label="City", max_length=100, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'City'}))
+    state = forms.CharField(label="State", max_length=100, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'State'}))
+    country = forms.CharField(label="Country", max_length=100, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Country'}))
+    postal_code = forms.CharField(label="Postal Code", max_length=20, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Postal Code'}))
+    website = forms.URLField(label="Website (optional)", required=False, widget=forms.URLInput(attrs={'class': 'form-control', 'placeholder': 'Website (optional)'}))
+    id_verification = forms.ImageField(label="ID Verification", required=True, widget=forms.ClearableFileInput(attrs={'class': 'form-control'}))
+
+
+

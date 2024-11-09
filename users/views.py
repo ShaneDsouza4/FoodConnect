@@ -5,12 +5,12 @@ from django.contrib import messages
 
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
-from .forms import SignUpForm, CreateRestaurantForm
+from .forms import SignUpForm, CreateRestaurantForm, CreateFoodBankForm
 from django import forms
 
 
 from alerts.models import EmergencyAlert
-from .models import Profile, Restaurant
+from .models import Profile, Restaurant, FoodBank
 
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
@@ -71,6 +71,11 @@ def signup_restaurant(request):
             username = form.cleaned_data['username']
             password = form.cleaned_data['password']
             email = form.cleaned_data['email']
+
+            if User.objects.filter(username=username).exists():
+                messages.error(request, 'Username already exists. Please choose a different one.')
+                return redirect('restaurant_signup')
+
             user = User.objects.create_user(
                 username=username,
                 email=email,
@@ -105,6 +110,48 @@ def signup_restaurant(request):
         restaurantform = CreateRestaurantForm()
         return render(request, 'webpages/retaurant_signup.html', {'form': restaurantform})
 
+
+def signup_foodbank(request):
+    if request.method == 'POST':
+        form = CreateFoodBankForm(request.POST, request.FILES)
+        if form.is_valid():
+            username = form.cleaned_data['username']
+            password = form.cleaned_data['password']
+            email = form.cleaned_data['email']
+
+            if User.objects.filter(username=username).exists():
+                messages.error(request, 'Username already exists. Please choose a different one.')
+                return redirect('foodbank_signup')
+
+            user = User.objects.create_user(username=username, email=email, password=password)
+
+            foodbank = FoodBank.objects.create(
+                user=user,
+                foodbank_name=form.cleaned_data['foodbank_name'],
+                foodbank_phone=form.cleaned_data['foodbank_phone'],
+                email=email,
+                street=form.cleaned_data['street'],
+                city=form.cleaned_data['city'],
+                state=form.cleaned_data['state'],
+                country=form.cleaned_data['country'],
+                postal_code=form.cleaned_data['postal_code'],
+                website=form.cleaned_data['website'],
+                id_verification=form.cleaned_data['id_verification']
+            )
+            foodbank.save()
+
+            user = authenticate(username=username, password=password)
+            if user is not None:
+                login(request, user)
+                messages.success(request, 'Food Bank registered successfully.')
+                return redirect('landing')
+        else:
+            print("Form errors:", form.errors)
+            messages.error(request, 'Error: There was a problem registering, please try again.')
+            return redirect('foodbank_signup')
+
+    foodbankform = CreateFoodBankForm()
+    return render(request, 'webpages/foodbank_signup.html', {'form': foodbankform})
 
 def signup_view(request):
     if request.method == 'POST':

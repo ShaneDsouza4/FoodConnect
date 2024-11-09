@@ -10,6 +10,7 @@ urlpatterns = [
     path('signup/', signup_view, name='signup'),
 
     path('restaurant/signup/', views.signup_restaurant, name='restaurant_signup'),
+    path('foodbank/signup/', views.signup_foodbank, name='foodbank_signup'),
     path('login/', views.login_user, name='login'),
     path('logout/', views.logout_user, name='logout'),
     #path('logout/', logout_view, name='logout'),
