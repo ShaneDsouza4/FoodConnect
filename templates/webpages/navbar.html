@@ -10,12 +10,12 @@
                 <li class="nav-item active"><a href="{% url 'landing' %}" class="nav-link">Home</a></li>
                 <li class="nav-item"><a class="nav-link" href="{% url 'about' %}">About</a></li>
                 <li class="nav-item"><a class="nav-link">Contact</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'analytics' %}">Analytics</a></li>  
 
                 {% if user.is_authenticated %}
                     <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}">Logout</a></li>
                 {% else %}
                     <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">Login</a></li>
-                    <!--<li class="nav-item"><a class="nav-link" href="{% url 'register' %}">Register</a></li>-->
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="dropdown04" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Sign Up</a>
                         <div class="dropdown-menu" aria-labelledby="dropdown04">
@@ -25,18 +25,17 @@
                         </div>
                     </li>
                 {% endif %}
-            
 
                 <!-- Cart Icon -->
                 <li class="nav-item cta cta-colored">
                     <a class="nav-link"><span class="icon-shopping_cart"></span>[0]</a>
                 </li>
-                                        <!-- New Alerts Button -->
+            
+                <!-- Alerts Button -->
                 <li class="nav-item">
-                    <a class="nav-link btn btn-danger text-white mr-2" href="{% url 'alerts' %}">Alerts</a>
+                    <a href="{% url 'alerts' %}" class="nav-link btn btn-danger text-white mr-2">Alerts</a>
                 </li>
             </ul>
-
         </div>
     </div>
 </nav>
