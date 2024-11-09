@@ -1,13 +1,16 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth.models import User
 from django.contrib.auth import login, authenticate, logout
 from django.db import IntegrityError
 from django.contrib import messages
 
-from alerts.models import EmergencyAlert
-from .models import Profile
-from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.models import User
+from django.contrib.auth.forms import UserCreationForm
+from .forms import SignUpForm, CreateRestaurantForm
+from django import forms
 
+
+from alerts.models import EmergencyAlert
+from .models import Profile, Restaurant
 
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
@@ -38,6 +41,69 @@ def logout_user(request):
     logout(request)
     messages.success(request, 'You have been logged out.')
     return redirect('landing')
+
+def register_user(request):
+    form = SignUpForm()
+    if request.method == 'POST':
+        form = SignUpForm(request.POST)
+        if form.is_valid():
+            form.save()
+            username = form.cleaned_data['username']
+            password = form.cleaned_data['password1']
+
+            #loginuser
+            user = authenticate(username=username, password=password)
+            login(request, user)
+            messages.success(request, 'You have registered successfully.')
+            return redirect('landing')
+        else:
+            print("Form errors:", form.errors)
+            messages.success(request, 'Error: There was a problem registering, please try again.')
+            return redirect('register')
+    else:
+        return render(request, 'webpages/register.html', {"form": form})
+
+def signup_restaurant(request):
+    if request.method == 'POST':
+        form = CreateRestaurantForm(request.POST, request.FILES)
+        if form.is_valid():
+
+            username = form.cleaned_data['username']
+            password = form.cleaned_data['password']
+            email = form.cleaned_data['email']
+            user = User.objects.create_user(
+                username=username,
+                email=email,
+                password=password
+            )
+
+            restaurant = Restaurant.objects.create(
+                user=user,
+                restaurant_name=form.cleaned_data['restaurant_name'],
+                restaurant_phone=form.cleaned_data['restaurant_phone'],
+                email=email,
+                street=form.cleaned_data['street'],
+                city=form.cleaned_data['city'],
+                state=form.cleaned_data['state'],
+                country=form.cleaned_data['country'],
+                postal_code=form.cleaned_data['postal_code'],
+                website=form.cleaned_data['website'],
+                id_verification=form.cleaned_data['id_verification']
+            )
+            restaurant.save()
+
+            user = authenticate(username=username, password=password)
+            if user is not None:
+                login(request, user)
+                messages.success(request, 'Restaurant registered successfully.')
+                return redirect('landing')
+        else:
+            print("Form errors:", form.errors)
+            messages.success(request, 'Error: There was a problem registering, please try again.')
+            return redirect('restaurant_signup')
+    else:
+        restaurantform = CreateRestaurantForm()
+        return render(request, 'webpages/retaurant_signup.html', {'form': restaurantform})
 
 
 def signup_view(request):
@@ -102,28 +168,6 @@ def signup_view(request):
             return render(request, 'users/signup.html', {'form_data': request.POST})
 
     return render(request, 'users/signup.html')
-
-def login_view(request):
-    if request.user.is_authenticated:
-        return redirect('home')  # Redirect already logged-in users to the home page
-
-    if request.method == 'POST':
-        form = AuthenticationForm(request, data=request.POST)
-        if form.is_valid():
-            username = form.cleaned_data.get('username')
-            password = form.cleaned_data.get('password')
-            user = authenticate(username=username, password=password)
-            if user is not None:
-                login(request, user)
-                return redirect('home')  # Redirect to home page after login
-            else:
-                messages.error(request, "Invalid username or password.")
-        else:
-            messages.error(request, "Invalid username or password.")
-    else:
-        form = AuthenticationForm()
-
-    return render(request, 'users/login.html', {'form': form})
 
 @login_required
 def home_view(request):

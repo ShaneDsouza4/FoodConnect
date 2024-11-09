@@ -41,7 +41,7 @@ class Profile(models.Model):
     # Restaurant
     restaurant_name = models.CharField(max_length=255, blank=True, null=True)
 
-    # Metrics for ranking (Harsh & Nishtha assistance)
+    # Metrics for ranking
     total_donations = models.IntegerField(default=0)  # Number of donations made
     donation_frequency = models.FloatField(default=0.0)  # How often donations are made
     donation_variety_count = models.IntegerField(default=0)  # Number of different types of items donated
@@ -58,3 +58,57 @@ class Profile(models.Model):
 
     def __str__(self):
         return f"{self.user.username}'s profile"
+
+
+restaurant_name = models.CharField(max_length=255)
+restaurant_phone = models.CharField(max_length=20)
+email = models.EmailField()
+street = models.CharField(max_length=255)
+city = models.CharField(max_length=100)
+state = models.CharField(max_length=100, choices=CANADA_PROVINCES_AND_TERRITORIES)
+country = models.CharField(max_length=100, default='Canada')
+postal_code = models.CharField(max_length=20)
+website = models.URLField(blank=True, null=True)
+
+id_verification = models.ImageField(upload_to='id_cards/', blank=True, null=True)
+is_verified = models.BooleanField(default=False)
+
+# Metrics
+total_donations = models.IntegerField(default=0)
+donation_frequency = models.FloatField(default=0.0)
+donation_variety_count = models.IntegerField(default=0)
+donation_volume = models.FloatField(default=0.0)
+average_rating = models.FloatField(blank=True, null=True)
+response_to_emergency_count = models.IntegerField(default=0)
+
+
+def __str__(self):
+    return self.restaurant_name
+
+# Restauraant
+class Restaurant(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='restaurant_profile')
+    restaurant_name = models.CharField(max_length=255)
+    restaurant_phone = models.CharField(max_length=20)
+    email = models.EmailField()
+    street = models.CharField(max_length=255)
+    city = models.CharField(max_length=100)
+    state = models.CharField(max_length=100, choices=CANADA_PROVINCES_AND_TERRITORIES)
+    country = models.CharField(max_length=100, default='Canada')
+    postal_code = models.CharField(max_length=20)
+    website = models.URLField(blank=True, null=True)
+
+    id_verification = models.ImageField(upload_to='id_cards/', blank=True, null=True)
+    is_verified = models.BooleanField(default=False)
+
+    # Metrics for the Ranking algorithm
+    total_donations = models.IntegerField(default=0)
+    donation_frequency = models.FloatField(default=0.0)
+    donation_variety_count = models.IntegerField(default=0)
+    donation_volume = models.FloatField(default=0.0)
+    average_rating = models.FloatField(blank=True, null=True)
+    response_to_emergency_count = models.IntegerField(default=0)
+
+    def __str__(self):
+        return f"{self.user.username} - {self.restaurant_name}"
+

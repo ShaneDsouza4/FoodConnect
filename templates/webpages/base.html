@@ -28,6 +28,20 @@
     <link rel="stylesheet" href="{% static 'css/flaticon.css' %}">
     <link rel="stylesheet" href="{% static 'css/icomoon.css' %}">
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
+      
+      
+      <script>
+        function showRoleSpecificFields() {
+            document.getElementById('restaurant-fields').style.display = 'none';
+            document.getElementById('foodbank-fields').style.display = 'none';
+            var role = document.getElementById('id_role').value;
+            if (role === 'restaurant') {
+                document.getElementById('restaurant-fields').style.display = 'block';
+            } else if (role === 'foodbank') {
+                document.getElementById('foodbank-fields').style.display = 'block';
+            }
+        }
+    </script>
   </head>
   <body class="goto-here">
 		<div class="py-1 bg-primary">
