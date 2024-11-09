@@ -2,6 +2,8 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .models import EmergencyAlert
+from .models import Alert
+from .forms import CreateAlertForm
 
 
 @login_required
@@ -21,6 +23,28 @@ def emergency_alert_view(request):
 
     return render(request, 'alerts/emergency_alert.html')
 
-def alerts_view(request):
-    # Your view logic here
-    return render(request, 'webpages/alerts.html')  # Make sure you have a template called alerts.html
+@login_required
+def create_alert(request):
+    if request.method == 'POST':
+        form = CreateAlertForm(request.POST)
+        if form.is_valid():
+            alert = Alert(
+                item_name=form.cleaned_data['item_name'],
+                quantity_needed=form.cleaned_data['quantity_needed'],
+                urgency_level=form.cleaned_data['urgency_level'],
+                description=form.cleaned_data['description'],
+                created_by=request.user
+            )
+            alert.save()
+
+            messages.success(request, 'Alert created successfully!')
+            return redirect('alerts')
+        else:
+            messages.error(request, 'There was an error creating the alert. Please try again.')
+            return redirect('alerts')
+    else:
+        form = CreateAlertForm()
+
+    return render(request, 'webpages/alerts.html', {'form': form})
+
+
