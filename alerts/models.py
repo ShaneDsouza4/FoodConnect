@@ -11,3 +11,24 @@ class EmergencyAlert(models.Model):
 
     def _str_(self):
         return f"Emergency Alert from {self.user.username} created on {self.created_at}"
+
+class Alert(models.Model):
+    item_name = models.CharField(max_length=100)
+    quantity_needed = models.PositiveIntegerField()
+    urgency_level = models.CharField(
+        max_length=20,
+        choices=[('low', 'Low'), ('medium', 'Medium'), ('high', 'High')],
+        default='medium'
+    )
+    created_by = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name="created_alerts"
+    )
+    date_created = models.DateTimeField(auto_now_add=True)
+    description = models.TextField(blank=True, null=True)
+    is_active = models.BooleanField(default=True)
+    last_updated = models.DateTimeField(auto_now=True)
+
+
