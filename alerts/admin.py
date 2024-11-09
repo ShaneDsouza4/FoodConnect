@@ -1,5 +1,5 @@
+# alerts/admin.py
 from django.contrib import admin
-from .models import EmergencyAlert
+from .models import Alert  # Import the correct model class
 
-# Register your models here.
-admin.site.register(EmergencyAlert)
+admin.site.register(Alert)
