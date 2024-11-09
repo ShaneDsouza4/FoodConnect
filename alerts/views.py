@@ -20,3 +20,7 @@ def emergency_alert_view(request):
         return redirect('home')
 
     return render(request, 'alerts/emergency_alert.html')
+
+def alerts_view(request):
+    # Your view logic here
+    return render(request, 'webpages/alerts.html')  # Make sure you have a template called alerts.html
