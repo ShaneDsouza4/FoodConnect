@@ -5,7 +5,7 @@ from django.contrib import messages
 
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
-from .forms import SignUpForm, CreateRestaurantForm, CreateFoodBankForm
+from .forms import SignUpForm, CreateRestaurantForm, CreateFoodBankForm, CreateIndividualForm
 from django import forms
 
 
@@ -110,7 +110,6 @@ def signup_restaurant(request):
         restaurantform = CreateRestaurantForm()
         return render(request, 'webpages/retaurant_signup.html', {'form': restaurantform})
 
-
 def signup_foodbank(request):
     if request.method == 'POST':
         form = CreateFoodBankForm(request.POST, request.FILES)
@@ -152,6 +151,46 @@ def signup_foodbank(request):
 
     foodbankform = CreateFoodBankForm()
     return render(request, 'webpages/foodbank_signup.html', {'form': foodbankform})
+
+def signup_individual(request):
+    if request.method == 'POST':
+        form = CreateIndividualForm(request.POST, request.FILES)
+        if form.is_valid():
+            username = form.cleaned_data['username']
+            password = form.cleaned_data['password']
+            email = form.cleaned_data['email']
+
+            if User.objects.filter(username=username).exists():
+                messages.error(request, 'Username already exists. Please choose a different one.')
+                return redirect('individual_signup')
+
+            user = User.objects.create_user(username=username, email=email, password=password)
+
+            profile = Profile.objects.create(
+                user=user,
+                first_name=form.cleaned_data['first_name'],
+                last_name=form.cleaned_data['last_name'],
+                phone_number=form.cleaned_data['phone_number'],
+                street_address=form.cleaned_data['street_address'],
+                city=form.cleaned_data['city'],
+                state=form.cleaned_data['state'],
+                country=form.cleaned_data['country'],
+                id_verification=form.cleaned_data['id_verification']
+            )
+            profile.save()
+
+            user = authenticate(username=username, password=password)
+            if user is not None:
+                login(request, user)
+                messages.success(request, 'Registration successful. Welcome!')
+                return redirect('landing')
+        else:
+            print("Form errors:", form.errors)
+            messages.error(request, 'There was a problem with your registration. Please try again.')
+            return redirect('individual_signup')
+
+    form = CreateIndividualForm()
+    return render(request, 'webpages/individual_signup.html', {'form': form})
 
 def signup_view(request):
     if request.method == 'POST':

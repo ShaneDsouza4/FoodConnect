@@ -105,5 +105,18 @@ class CreateFoodBankForm(forms.Form):
     website = forms.URLField(label="Website (optional)", required=False, widget=forms.URLInput(attrs={'class': 'form-control', 'placeholder': 'Website (optional)'}))
     id_verification = forms.ImageField(label="ID Verification", required=True, widget=forms.ClearableFileInput(attrs={'class': 'form-control'}))
 
+# Individual Form
+class CreateIndividualForm(forms.Form):
+    username = forms.CharField(label="Username", max_length=150, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Username'}))
+    password = forms.CharField(label="Password", widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Password'}))
+    first_name = forms.CharField(label="First Name", max_length=30, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'First Name'}))
+    last_name = forms.CharField(label="Last Name", max_length=30, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Last Name'}))
+    email = forms.EmailField(label="Email Address", widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Email Address'}))
+    phone_number = forms.CharField(label="Phone Number", max_length=20, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Phone Number'}))
+    street_address = forms.CharField(label="Street Address", max_length=255, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Street'}))
+    city = forms.CharField(label="City", max_length=100, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'City'}))
+    state = forms.CharField(label="State", max_length=100, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'State'}))
+    country = forms.CharField(label="Country", max_length=100, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Country'}))
+    id_verification = forms.ImageField(label="ID Verification (optional)", required=False, widget=forms.ClearableFileInput(attrs={'class': 'form-control'}))
 
 
