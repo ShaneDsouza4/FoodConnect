@@ -4,4 +4,6 @@ from . import views
 urlpatterns = [
     path('emergency/', emergency_alert_view, name='emergency_alert'),
     path('create-alerts/', views.create_alert, name='alerts'),
+    path('alerts/', views.alert_list, name='alert_list'),
+    path('donate/<int:alert_id>/', views.donate, name='donate'),
 ]
