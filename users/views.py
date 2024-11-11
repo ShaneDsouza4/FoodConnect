@@ -15,7 +15,8 @@ from .models import Profile, Restaurant, FoodBank
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
 
-from utils import send_email_to_client
+from utils import send_email_to_us
+
 
 def landing_view(request):
     return render(request, 'webpages/index.html')
@@ -292,7 +293,7 @@ def contact_view(request):
         full_message = f"This message is from {name}.\n\n{message}"
 
         try:
-            send_email_to_client(subject, full_message, recipient_list)
+            send_email_to_us(subject, full_message, recipient_list)
             messages.success(request, 'Message sent succesfully.')
         except Exception as e:
             print(e)
