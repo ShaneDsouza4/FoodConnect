@@ -28,65 +28,6 @@
                     <ol class="breadcrumb mb-4">
                         <li class="breadcrumb-item active">Dashboard</li>
                     </ol>
-                    <!-- <div class="row">
-                        <div class="col-xl-3 col-md-6">
-                            <div class="card bg-primary text-white mb-4">
-                                <div class="card-body">Primary Card</div>
-                                <div class="card-footer d-flex align-items-center justify-content-between">
-                                    <a class="small text-white stretched-link" href="#">View Details</a>
-                                    <div class="small text-white"><i class="fas fa-angle-right"></i></div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-xl-3 col-md-6">
-                            <div class="card bg-warning text-white mb-4">
-                                <div class="card-body">Warning Card</div>
-                                <div class="card-footer d-flex align-items-center justify-content-between">
-                                    <a class="small text-white stretched-link" href="#">View Details</a>
-                                    <div class="small text-white"><i class="fas fa-angle-right"></i></div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-xl-3 col-md-6">
-                            <div class="card bg-success text-white mb-4">
-                                <div class="card-body">Success Card</div>
-                                <div class="card-footer d-flex align-items-center justify-content-between">
-                                    <a class="small text-white stretched-link" href="#">View Details</a>
-                                    <div class="small text-white"><i class="fas fa-angle-right"></i></div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-xl-3 col-md-6">
-                            <div class="card bg-danger text-white mb-4">
-                                <div class="card-body">Danger Card</div>
-                                <div class="card-footer d-flex align-items-center justify-content-between">
-                                    <a class="small text-white stretched-link" href="#">View Details</a>
-                                    <div class="small text-white"><i class="fas fa-angle-right"></i></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-xl-6">
-                            <div class="card mb-4">
-                                <div class="card-header">
-                                    <i class="fas fa-chart-area me-1"></i>
-                                    Area Chart Example
-                                </div>
-                                <div class="card-body"><canvas id="myAreaChart" width="100%" height="40"></canvas></div>
-                            </div>
-                        </div>
-                        <div class="col-xl-6">
-                            <div class="card mb-4">
-                                <div class="card-header">
-                                    <i class="fas fa-chart-bar me-1"></i>
-                                    Bar Chart Example
-                                </div>
-                                <div class="card-body"><canvas id="myBarChart" width="100%" height="40"></canvas></div>
-                            </div>
-                        </div>
-                    </div> -->
-                    <!-- Add these inside your main container where other cards are located -->
                     
                     <div class="container-fluid">
                         <!-- Metric Cards -->
@@ -142,13 +83,121 @@
                                     <div class="card-header"><i class="fas fa-chart-pie me-1"></i> Donation by Donor Type</div>
                                     <div class="card-body">
                                         <canvas id="donationByDonorTypePieChart"></canvas>
-                                        <!-- Pass the JSON string to JavaScript via a hidden element -->
                                         <script type="text/javascript">
                                             var pieChartData = {{ pie_chart_data|safe }};
                                         </script>
                                     </div>
                                 </div>
                             </div>
+
+                            <!-- Donor Location Distribution (Bar Chart) -->
+                            <div class="card mb-4">
+                                <div class="card-header">
+                                    <i class="fas fa-chart-bar me-1"></i> Donor Location Distribution
+                                </div>
+                                <div class="card-body">
+                                    <canvas id="donorLocationDistributionChart"></canvas>
+                                </div>
+                            </div>
+                            <script>
+                                document.addEventListener('DOMContentLoaded', function() {
+                                    var locationData = JSON.parse('{{ location_data|safe }}');
+                                    var ctx = document.getElementById('donorLocationDistributionChart').getContext('2d');
+                                    var donorLocationDistributionChart = new Chart(ctx, {
+                                        type: 'bar',
+                                        data: {
+                                            labels: locationData.labels,  // Use actual city names
+                                            datasets: [{
+                                                label: 'Number of Donors',
+                                                data: locationData.values,
+                                                backgroundColor: [
+                                                    'rgba(255, 99, 132, 0.2)',
+                                                    'rgba(54, 162, 235, 0.2)',
+                                                    'rgba(255, 206, 86, 0.2)'
+                                                ],
+                                                borderColor: [
+                                                    'rgba(255, 99, 132, 1)',
+                                                    'rgba(54, 162, 235, 1)',
+                                                    'rgba(255, 206, 86, 1)'
+                                                ],
+                                                borderWidth: 1
+                                            }]
+                                        },
+                                        options: {
+                                            scales: {
+                                                y: {
+                                                    beginAtZero: true
+                                                }
+                                            }
+                                        }
+                                    });
+                                });
+                                </script>
+
+
+                                <div class="col-xl-6">
+                                    <div class="card mb-4">
+                                        <div class="card-header"><i class="fas fa-chart-bar me-1"></i> Response to Emergency Count by Donor Type</div>
+                                        <div class="card-body">
+                                            <canvas id="responseToEmergencyChart"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                                <script>
+                                    document.addEventListener('DOMContentLoaded', function() {
+                                        var responseEmergencyData = JSON.parse('{{ response_emergency_data|safe }}');
+                                        var ctxEmergency = document.getElementById('responseToEmergencyChart').getContext('2d');
+                                        var responseToEmergencyChart = new Chart(ctxEmergency, {
+                                            type: 'bar',
+                                            data: {
+                                                labels: ['Individual', 'Restaurant'],
+                                                datasets: [{
+                                                    label: 'Response to Emergency',
+                                                    data: [responseEmergencyData.individual, responseEmergencyData.restaurant],
+                                                    backgroundColor: ['rgba(255, 99, 132, 0.6)', 'rgba(75, 192, 192, 0.6)'],
+                                                    borderColor: ['rgba(255, 99, 132, 1)', 'rgba(75, 192, 192, 1)'],
+                                                    borderWidth: 1
+                                                }]
+                                            },
+                                            options: {
+                                                indexAxis: 'y',
+                                            }
+                                        });
+                                    });
+                                </script>
+
+
+                            <!-- Donor Verification Status (Donut Chart) -->
+                            <!-- <div class="col-xl-6">
+                                <div class="card mb-4">
+                                    <div class="card-header"><i class="fas fa-chart-pie me-1"></i> Donor Verification Status</div>
+                                    <div class="card-body">
+                                        <canvas id="donorVerificationStatusChart"></canvas>
+                                        <script>
+                                            var ctxVerification = document.getElementById('donorVerificationStatusChart').getContext('2d');
+                                            var donorVerificationStatusChart = new Chart(ctxVerification, {
+                                                type: 'doughnut',
+                                                data: {
+                                                    labels: ['Verified', 'Not Verified'],
+                                                    datasets: [{
+                                                        data: {{ verification_status_data|safe }},
+                                                        backgroundColor: ['rgba(75, 192, 192, 0.6)', 'rgba(255, 99, 132, 0.6)'],
+                                                        borderColor: ['rgba(75, 192, 192, 1)', 'rgba(255, 99, 132, 1)'],
+                                                        borderWidth: 1
+                                                    }]
+                                                },
+                                                options: {
+                                                    responsive: true,
+                                                    maintainAspectRatio: false,
+                                                }
+                                            });
+                                        </script>
+                                    </div>
+                                </div>
+                            </div> -->
+
+
+                            
                         </div>
 
                     <div class="card mb-4">

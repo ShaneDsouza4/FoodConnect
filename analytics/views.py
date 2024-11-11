@@ -1,6 +1,6 @@
 import pandas as pd
 from django.shortcuts import render
-from users.models import Profile, Restaurant  # Import your Profile model
+from users.models import Profile, Restaurant
 from sklearn.preprocessing import MinMaxScaler
 from django.db.models import Sum, Count
 from django.utils.timezone import now
@@ -38,6 +38,36 @@ def get_donation_data_by_type():
     }
     return donation_data
 
+def get_donor_location_distribution():
+    location_data = Profile.objects.values('city').annotate(total=Count('id')).order_by('-total')
+    labels = [data['city'] for data in location_data if data['city']]  # Ensure city is not None or empty
+    values = [data['total'] for data in location_data if data['city']]
+    return {
+        'labels': labels,
+        'values': values
+    }
+
+def get_response_to_emergency_data():
+    # Assuming that 'response_to_emergency_count' exists only in the Restaurant model
+    # and does not exist in the Profile model.
+    response_individual = Profile.objects.aggregate(sum=Sum('donation_frequency'))['sum'] or 0
+    response_restaurant = Restaurant.objects.aggregate(sum=Sum('response_to_emergency_count'))['sum'] or 0
+    print(response_individual)
+    print(response_restaurant)
+    return {
+        'individual': response_individual,
+        'restaurant': response_restaurant
+    }
+
+def get_verification_status_data():
+    verified_count = Profile.objects.filter(is_verified=True).count()
+    not_verified_count = Profile.objects.filter(is_verified=False).count()
+    return [verified_count, not_verified_count]
+
+def get_average_ratings_data():
+    ratings = Restaurant.objects.values_list('average_rating', flat=True)
+    return list(ratings)
+
 def analytics_view(request):
     data = load_and_prepare_data()
     ranked_data = rank_donators(data)
@@ -47,6 +77,23 @@ def analytics_view(request):
     donation_data = get_donation_data_by_type()
     pie_chart_data = json.dumps(donation_data) 
 
+    # Fetch additional data for charts
+    location_data = get_donor_location_distribution()
+    response_emergency_data = get_response_to_emergency_data()
+    verification_status_data = get_verification_status_data()
+    average_ratings_data = get_average_ratings_data()
+
+    # Serialize JSON data for JavaScript charts
+    response_emergency_json = json.dumps(response_emergency_data)
+    verification_status_json = json.dumps({
+        'labels': ['Verified', 'Not Verified'],
+        'data': verification_status_data
+    })
+    average_ratings_json = json.dumps({
+        'labels': ['Ratings'],
+        'data': average_ratings_data
+    })
+
     context = {
         'funds_raised': funds_raised,
         'progress_to_yearly_target': progress_to_yearly_target,
@@ -54,6 +101,10 @@ def analytics_view(request):
         'ranked_donators': ranked_data[['name', 'total_donations', 'donation_volume', 'score']].to_dict(orient='records'),
         'total_volume': data['donation_volume'].sum(),
         'pie_chart_data': pie_chart_data,
+        'response_emergency_data': response_emergency_json,
+        'verification_status_data': verification_status_json,
+        'average_ratings_data': average_ratings_json,
+        'location_data': json.dumps(location_data),
     }
 
     return render(request, 'webpages/analytics.html', context)
