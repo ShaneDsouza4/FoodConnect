@@ -4,6 +4,7 @@ from django.contrib import messages
 from .models import EmergencyAlert
 from .models import Alert
 from .forms import CreateAlertForm
+from django.shortcuts import render, get_object_or_404
 
 
 @login_required
@@ -46,5 +47,13 @@ def create_alert(request):
         form = CreateAlertForm()
 
     return render(request, 'webpages/alerts.html', {'form': form})
+def alert_list(request):
+    alerts = Alert.objects.filter(is_active=True)  # Fetch active alerts
+    return render(request, 'webpages/alert_list.html', {'alerts': alerts})
+
+def donate(request, alert_id):
+    alert = get_object_or_404(Alert, id=alert_id)
+    # Your donate logic here
+    return render(request, 'donate.html', {'alert': alert})
 
 
