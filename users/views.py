@@ -15,6 +15,8 @@ from .models import Profile, Restaurant, FoodBank
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
 
+from utils import send_email_to_client
+
 def landing_view(request):
     return render(request, 'webpages/index.html')
     #return render(request, 'users/landing.html')
@@ -277,3 +279,23 @@ def emergency_alert_view(request):
 def donate_view(request):
     # Implement the donate functionality here
     return render(request, 'users/donate.html')
+
+
+def contact_view(request):
+    if request.method == 'POST':
+        name=request.POST['name']
+        email=request.POST['email']
+        subject=request.POST['subject']
+        message=request.POST['message']
+
+        recipient_list=[email]
+        full_message = f"This message is from {name}.\n\n{message}"
+
+        try:
+            send_email_to_client(subject, full_message, recipient_list)
+            messages.success(request, 'Message sent succesfully.')
+        except Exception as e:
+            print(e)
+            messages.error(request, 'Message was not sent.')
+            return redirect('contact_us')
+    return render(request, 'webpages/contact.html')
