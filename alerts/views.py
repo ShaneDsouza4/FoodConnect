@@ -63,7 +63,7 @@ def ResponseToDonationView(request, alert_id):
     alert = get_object_or_404(Alert, id=alert_id)
 
     if request.method == 'POST':
-        form = ResponseToDonationForm(request.POST)  # Use the corrected form
+        form = ResponseToDonationForm(request.POST)
 
         if form.is_valid():
             response = form.save(commit=False)
@@ -72,7 +72,8 @@ def ResponseToDonationView(request, alert_id):
             response.status = 'in_progress'
             response.save()
 
-            alert.is_active = False  # Optionally deactivate alert after donation
+            # Optionally deactivate alert after donation or add any other logic
+            alert.is_active = False
             alert.save()
 
             messages.success(request, 'Your donation response has been submitted successfully.')
@@ -80,10 +81,9 @@ def ResponseToDonationView(request, alert_id):
         else:
             messages.error(request, 'There was an error with your response. Please try again.')
     else:
-        form = ResponseToDonationForm()  # Initialize an empty form on GET request
+        form = ResponseToDonationForm()
 
     return render(request, 'webpages/response_to_donation.html', {'form': form, 'alert': alert})
-
 @login_required
 def ResponseStatusView(request, response_id):
     response = get_object_or_404(ResponseToDonationForm, id=response_id, donor=request.user)

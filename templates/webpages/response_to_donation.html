@@ -15,12 +15,16 @@
     </div>
     <!-- Hero End -->
 <div class="container">
-    <h2>Respond to Donation Alert for {{ alert.item_name }}</h2>
-    <form method="POST">
-    {% csrf_token %}
-    {{ form.as_p }}  
+        <h2>Respond to Donation Alert for {{ alert.item_name }}</h2>
+        <form method="POST">
+            {% csrf_token %}
+            {{ form.name.label_tag }} {{ form.name }}  
+            {{ form.address.label_tag }} {{ form.address }}  
+            {{ form.item.label_tag }} {{ form.item }} 
+            {{ form.quantity.label_tag }} {{ form.quantity }}  
+            {{ form.description.label_tag }} {{ form.description }}  
+            <button type="submit" class="btn btn-primary">Submit Response</button>
+        </form>
+    </div>
 
-    <button type="submit" class="btn btn-primary">Submit Response</button>
-</form>
-</div>
 {% endblock %}
