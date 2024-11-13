@@ -1,6 +1,6 @@
+# alerts/forms.py
 from django import forms
-from .models import Alert
-
+from .models import Alert, ResponseToDonation
 
 class CreateAlertForm(forms.Form):
     item_name = forms.CharField(
@@ -8,21 +8,29 @@ class CreateAlertForm(forms.Form):
         max_length=100,
         widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Item Name'})
     )
-
     quantity_needed = forms.IntegerField(
         label="Quantity Needed",
         widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Quantity Needed'})
     )
-
     urgency_level = forms.ChoiceField(
         label="Urgency Level",
         choices=[('low', 'Low'), ('medium', 'Medium'), ('high', 'High')],
         initial='medium',
         widget=forms.Select(attrs={'class': 'form-control'})
     )
-
     description = forms.CharField(
         label="Description",
         required=False,
         widget=forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Description', 'rows': 4})
     )
+
+class ResponseToDonationForm(forms.ModelForm):
+    description = forms.CharField(
+        widget=forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Additional Details', 'rows': 4}),
+        required=False,
+        label="Additional Details"
+    )
+
+    class Meta:
+        model = ResponseToDonation
+        fields = ['description']
