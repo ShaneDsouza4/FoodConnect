@@ -1,11 +1,14 @@
+from django.core.paginator import Paginator
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .models import EmergencyAlert
 from .models import Alert
 from .forms import CreateAlertForm
+from .forms import ResponseToDonationForm
 from django.shortcuts import render, get_object_or_404
 
+#alerts/views.py
 
 @login_required
 def emergency_alert_view(request):
@@ -48,12 +51,41 @@ def create_alert(request):
 
     return render(request, 'webpages/alerts.html', {'form': form})
 def alert_list(request):
-    alerts = Alert.objects.filter(is_active=True)  # Fetch active alerts
+    alerts = Alert.objects.filter(is_active=True)
     return render(request, 'webpages/alert_list.html', {'alerts': alerts})
 
-def donate(request, alert_id):
+# def donate(request, alert_id):
+#     alert = get_object_or_404(Alert, id=alert_id)
+#     # Your donate logic here
+#     return render(request, 'donate.html', {'alert': alert})
+@login_required
+def ResponseToDonationView(request, alert_id):
     alert = get_object_or_404(Alert, id=alert_id)
-    # Your donate logic here
-    return render(request, 'donate.html', {'alert': alert})
 
+    if request.method == 'POST':
+        form = ResponseToDonationForm(request.POST)  # Use the corrected form
+
+        if form.is_valid():
+            response = form.save(commit=False)
+            response.alert = alert
+            response.donor = request.user
+            response.status = 'in_progress'
+            response.save()
+
+            alert.is_active = False  # Optionally deactivate alert after donation
+            alert.save()
+
+            messages.success(request, 'Your donation response has been submitted successfully.')
+            return redirect('alert_list')
+        else:
+            messages.error(request, 'There was an error with your response. Please try again.')
+    else:
+        form = ResponseToDonationForm()  # Initialize an empty form on GET request
+
+    return render(request, 'webpages/response_to_donation.html', {'form': form, 'alert': alert})
+
+@login_required
+def ResponseStatusView(request, response_id):
+    response = get_object_or_404(ResponseToDonationForm, id=response_id, donor=request.user)
+    return render(request, 'webpages/response_status.html', {'response': response})
 

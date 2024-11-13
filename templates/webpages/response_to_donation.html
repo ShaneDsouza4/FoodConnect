@@ -1,0 +1,26 @@
+{% extends 'webpages/base.html' %}
+
+{% load static %}
+{% block content %}
+
+    <!-- Hero Start -->
+    <div class="hero-wrap hero-bread" style="background-image: url('{% static "images/bg_1.jpg" %}');">
+        <div class="container">
+            <div class="row no-gutters slider-text align-items-center justify-content-center">
+                <div class="col-md-9 ftco-animate text-center">
+                    <h1 class="mb-0 bread">DONATE!</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Hero End -->
+<div class="container">
+    <h2>Respond to Donation Alert for {{ alert.item_name }}</h2>
+    <form method="POST">
+    {% csrf_token %}
+    {{ form.as_p }}  <!-- Render the form fields as paragraph tags -->
+
+    <button type="submit" class="btn btn-primary">Submit Response</button>
+</form>
+</div>
+{% endblock %}
