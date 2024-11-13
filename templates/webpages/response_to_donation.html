@@ -18,7 +18,7 @@
     <h2>Respond to Donation Alert for {{ alert.item_name }}</h2>
     <form method="POST">
     {% csrf_token %}
-    {{ form.as_p }}  <!-- Render the form fields as paragraph tags -->
+    {{ form.as_p }}  
 
     <button type="submit" class="btn btn-primary">Submit Response</button>
 </form>

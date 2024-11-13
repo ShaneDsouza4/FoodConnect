@@ -24,7 +24,6 @@ class CreateAlertForm(forms.Form):
         widget=forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Description', 'rows': 4})
     )
 
-# Make sure ResponseToDonation is defined outside of CreateAlertForm
 class ResponseToDonationForm(forms.ModelForm):
     description = forms.CharField(
         widget=forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Additional Details', 'rows': 4}),
