@@ -7,6 +7,7 @@ from .models import Alert
 from .forms import CreateAlertForm
 from .forms import ResponseToDonationForm
 from django.shortcuts import render, get_object_or_404
+from django.db.models import Sum
 
 #alerts/views.py
 
@@ -50,8 +51,16 @@ def create_alert(request):
         form = CreateAlertForm()
 
     return render(request, 'webpages/alerts.html', {'form': form})
+
+
 def alert_list(request):
     alerts = Alert.objects.filter(is_active=True)
+    for alert in alerts:
+        alert.total_quantity_donated = alert.responses.aggregate(
+            total=Sum('quantity_donated')
+        )['total'] or 0
+        alert.remaining_quantity_needed = alert.quantity_needed - alert.total_quantity_donated
+        alert.latest_response = alert.responses.order_by('-created_at').first()
     return render(request, 'webpages/alert_list.html', {'alerts': alerts})
 
 # def donate(request, alert_id):
@@ -71,9 +80,15 @@ def ResponseToDonationView(request, alert_id):
             response.donor = request.user
             response.status = 'in_progress'
             response.save()
+            quantity_donated = form.cleaned_data['quantity']
+            alert.quantity_needed -= quantity_donated
+            alert.quantity_needed = max(alert.quantity_needed, 0)
 
-            # Optionally deactivate alert after donation or add any other logic
-            alert.is_active = False
+            if alert.quantity_needed == 0:
+                alert.is_active = False
+            else:
+                alert.is_active = True
+
             alert.save()
 
             messages.success(request, 'Your donation response has been submitted successfully.')

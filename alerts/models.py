@@ -41,6 +41,7 @@ class ResponseToDonation(models.Model):
     alert = models.ForeignKey(Alert, on_delete=models.CASCADE, related_name="responses")
     donor = models.ForeignKey(User, on_delete=models.CASCADE)
     description = models.TextField(blank=True, null=True)
+    quantity_donated = models.PositiveIntegerField(default=0)
     status = models.CharField(max_length=50, choices=STATUS_CHOICES, default='pending')
     created_at = models.DateTimeField(auto_now_add=True)
 
