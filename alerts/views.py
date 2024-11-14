@@ -13,15 +13,12 @@ from django.db.models import Sum
 
 @login_required
 def emergency_alert_view(request):
-    # Only foodbank user role
     if request.user.profile.role != 'foodbank':
         messages.error(request, "Only Foodbanks can submit emergency alerts.")
         return redirect('home')
 
     if request.method == 'POST':
         message = request.POST.get('message')
-
-        # Create the Emergency Alert
         EmergencyAlert.objects.create(user=request.user, message=message)
         messages.success(request, "Emergency alert submitted successfully.")
         return redirect('home')
@@ -63,10 +60,6 @@ def alert_list(request):
         alert.latest_response = alert.responses.order_by('-created_at').first()
     return render(request, 'webpages/alert_list.html', {'alerts': alerts})
 
-# def donate(request, alert_id):
-#     alert = get_object_or_404(Alert, id=alert_id)
-#     # Your donate logic here
-#     return render(request, 'donate.html', {'alert': alert})
 @login_required
 def ResponseToDonationView(request, alert_id):
     alert = get_object_or_404(Alert, id=alert_id)

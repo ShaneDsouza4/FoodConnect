@@ -10,8 +10,6 @@ class EmergencyAlert(models.Model):
     message = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True) #For one time saving purppposes
 
-    # def _str_(self):
-    #     return f"Emergency Alert from {self.user.username} created on {self.created_at}"
 
 class Alert(models.Model):
     item_name = models.CharField(max_length=100)
