@@ -3,7 +3,6 @@
 {% load static %}
 {% block content %}
 
-    <!-- Hero Start -->
     <div class="hero-wrap hero-bread" style="background-image: url('{% static "images/bg_1.jpg" %}');">
       <div class="container">
         <div class="row no-gutters slider-text align-items-center justify-content-center">
@@ -14,14 +13,13 @@
         </div>
       </div>
     </div>
-    <!-- Hero End -->
 
     <section class="ftco-section testimony-section">
       <div class="container">
         <div class="row mb-5 pb-3">
           <div class="col-md-12">
+            
             <!-- Starting Analytics -->
-
             <main>
                 <div class="container-fluid px-4">
                     <h2 class="mt-4">Analytics</h2>
@@ -31,7 +29,7 @@
                     
                     <div class="container-fluid">
                         <!-- Metric Cards -->
-                        <div class="row">
+                        <div class="row mb-5 pb-3 justify-content-center">
                             <!-- Funds Raised Card -->
                             <div class="col-xl-3 col-md-6">
                                 <div class="card bg-info text-white mb-4">
@@ -62,22 +60,10 @@
                                     </div>
                                 </div>
                             </div>
-                            <!-- Donor Retention Rate Card -->
-                            <div class="col-xl-3 col-md-6">
-                                <div class="card bg-warning text-white mb-4">
-                                    <div class="card-body">Donor Retention Rate</div>
-                                    <div class="card-footer d-flex align-items-center justify-content-between">
-                                        <h2 class="medium text-white stretched-link">TBD%</h2>
-                                        <i class="fas fa-angle-right"></i>
-                                    </div>
-                                </div>
-                            </div>
                         </div>
 
-                        
-
                         <!-- Donation by Donor Type Chart Section -->
-                        <div class="row">
+                        <div class="row mb-5 pb-3 justify-content-center">
                             <div class="col-xl-6">
                                 <div class="card mb-4">
                                     <div class="card-header"><i class="fas fa-chart-pie me-1"></i> Donation by Donor Type</div>
@@ -164,40 +150,70 @@
                                             }
                                         });
                                     });
-                                </script>
+                                </script> 
 
-
-                            <!-- Donor Verification Status (Donut Chart) -->
-                            <!-- <div class="col-xl-6">
-                                <div class="card mb-4">
-                                    <div class="card-header"><i class="fas fa-chart-pie me-1"></i> Donor Verification Status</div>
-                                    <div class="card-body">
-                                        <canvas id="donorVerificationStatusChart"></canvas>
-                                        <script>
-                                            var ctxVerification = document.getElementById('donorVerificationStatusChart').getContext('2d');
-                                            var donorVerificationStatusChart = new Chart(ctxVerification, {
-                                                type: 'doughnut',
-                                                data: {
-                                                    labels: ['Verified', 'Not Verified'],
-                                                    datasets: [{
-                                                        data: {{ verification_status_data|safe }},
-                                                        backgroundColor: ['rgba(75, 192, 192, 0.6)', 'rgba(255, 99, 132, 0.6)'],
-                                                        borderColor: ['rgba(75, 192, 192, 1)', 'rgba(255, 99, 132, 1)'],
-                                                        borderWidth: 1
-                                                    }]
-                                                },
-                                                options: {
-                                                    responsive: true,
-                                                    maintainAspectRatio: false,
-                                                }
-                                            });
-                                        </script>
+                                <!-- Future Alerts Prediction (Line Chart) -->
+                                <div class="col-xl-6">
+                                    <div class="card mb-4">
+                                        <div class="card-header"><i class="fas fa-chart-line me-1"></i> Future Alerts Prediction</div>
+                                        <div class="card-body">
+                                            <canvas id="futureAlertsLineChart"></canvas>
+                                        </div>
                                     </div>
                                 </div>
-                            </div> -->
-
-
-                            
+                                <script>
+                                    document.addEventListener('DOMContentLoaded', function() {
+                                        var futureAlertsData = {{ future_alerts|safe }};
+                                        
+                                        var labels = Object.keys(futureAlertsData).map(date => new Date(date).toISOString().split('T')[0]);
+                                        var data = Object.values(futureAlertsData);
+                                        
+                                        var ctxFutureAlerts = document.getElementById('futureAlertsLineChart').getContext('2d');
+                                        var futureAlertsLineChart = new Chart(ctxFutureAlerts, {
+                                            type: 'line',
+                                            data: {
+                                                labels: labels,
+                                                datasets: [{
+                                                    label: 'Predicted Alerts',
+                                                    data: data,
+                                                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                                                    borderColor: 'rgba(54, 162, 235, 1)',
+                                                    borderWidth: 2,
+                                                    fill: true,
+                                                    tension: 0.4
+                                                }]
+                                            },
+                                            options: {
+                                                scales: {
+                                                    y: {
+                                                        beginAtZero: true,
+                                                        title: {
+                                                            display: true,
+                                                            text: 'Number of Alerts'
+                                                        }
+                                                    },
+                                                    x: {
+                                                        title: {
+                                                            display: true,
+                                                            text: 'Date'
+                                                        },
+                                                        ticks: {
+                                                            maxTicksLimit: 4,
+                                                        }
+                                                    }
+                                                },
+                                                plugins: {
+                                                    legend: {
+                                                        display: true,
+                                                        position: 'top'
+                                                    }
+                                                },
+                                                responsive: true,
+                                                maintainAspectRatio: false
+                                            }
+                                        });
+                                    });
+                                </script>                                         
                         </div>
 
                     <div class="card mb-4">

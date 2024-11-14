@@ -1,6 +1,8 @@
+from datetime import timedelta
 import pandas as pd
 from django.shortcuts import render
 from users.models import Profile, Restaurant
+from alerts.models import Alert
 from sklearn.preprocessing import MinMaxScaler
 from django.db.models import Sum, Count
 from django.utils.timezone import now
@@ -12,12 +14,8 @@ def load_and_prepare_data():
         'donation_volume', 'donation_variety_count'
     )
     data = pd.DataFrame(list(queryset))
-    data.fillna(0, inplace=True)  # Handle missing data
-
-    # Convert first_name and last_name into a single full name
+    data.fillna(0, inplace=True)
     data['name'] = data['first_name'].astype(str) + ' ' + data['last_name'].astype(str)
-
-    # Explicitly return a copy of the DataFrame
     return data[['name', 'total_donations', 'donation_frequency', 'donation_volume', 'donation_variety_count']].copy()
 
 def rank_donators(data):
@@ -40,7 +38,7 @@ def get_donation_data_by_type():
 
 def get_donor_location_distribution():
     location_data = Profile.objects.values('city').annotate(total=Count('id')).order_by('-total')
-    labels = [data['city'] for data in location_data if data['city']]  # Ensure city is not None or empty
+    labels = [data['city'] for data in location_data if data['city']]
     values = [data['total'] for data in location_data if data['city']]
     return {
         'labels': labels,
@@ -48,12 +46,8 @@ def get_donor_location_distribution():
     }
 
 def get_response_to_emergency_data():
-    # Assuming that 'response_to_emergency_count' exists only in the Restaurant model
-    # and does not exist in the Profile model.
     response_individual = Profile.objects.aggregate(sum=Sum('donation_frequency'))['sum'] or 0
     response_restaurant = Restaurant.objects.aggregate(sum=Sum('response_to_emergency_count'))['sum'] or 0
-    print(response_individual)
-    print(response_restaurant)
     return {
         'individual': response_individual,
         'restaurant': response_restaurant
@@ -68,12 +62,36 @@ def get_average_ratings_data():
     ratings = Restaurant.objects.values_list('average_rating', flat=True)
     return list(ratings)
 
+def load_alert_data():
+    alerts = Alert.objects.filter(is_active=True).values('date_created', 'urgency_level')
+    data = pd.DataFrame(alerts)
+    data['date_created'] = pd.to_datetime(data['date_created'])
+    data.set_index('date_created', inplace=True)
+    
+    return data
+
+def predict_future_alerts():
+    data = load_alert_data()
+    daily_alerts = data.resample('D').size()
+    
+    if daily_alerts.empty:
+        return { (pd.Timestamp.now() + timedelta(days=i)).strftime('%Y-%m-%d'): 0.0 for i in range(1, 8) }
+
+    window_size = min(7, len(daily_alerts))
+    data['7_day_avg'] = daily_alerts.rolling(window=window_size).mean()
+    recent_avg = data['7_day_avg'].iloc[-window_size:].mean() if not data['7_day_avg'].iloc[-window_size:].isna().all() else 0
+    last_date = data.index[-1]
+    future_dates = [last_date + timedelta(days=i) for i in range(1, 8)]
+    future_predictions = {date.strftime('%Y-%m-%d'): recent_avg for date in future_dates}
+
+    return future_predictions
+
 def analytics_view(request):
     data = load_and_prepare_data()
     ranked_data = rank_donators(data)
     funds_raised = Profile.objects.aggregate(total=Sum('total_donations'))['total'] or 0
     total_donors = Profile.objects.count() + Restaurant.objects.count()
-    progress_to_yearly_target = (funds_raised / 17500000) * 100  # Example fixed target
+    progress_to_yearly_target = round((funds_raised / 1750) * 100, 2)
     donation_data = get_donation_data_by_type()
     pie_chart_data = json.dumps(donation_data) 
 
@@ -82,6 +100,7 @@ def analytics_view(request):
     response_emergency_data = get_response_to_emergency_data()
     verification_status_data = get_verification_status_data()
     average_ratings_data = get_average_ratings_data()
+    future_alerts = predict_future_alerts()
 
     # Serialize JSON data for JavaScript charts
     response_emergency_json = json.dumps(response_emergency_data)
@@ -105,6 +124,7 @@ def analytics_view(request):
         'verification_status_data': verification_status_json,
         'average_ratings_data': average_ratings_json,
         'location_data': json.dumps(location_data),
+        'future_alerts': future_alerts,
     }
 
     return render(request, 'webpages/analytics.html', context)
