@@ -19,18 +19,36 @@ def load_and_prepare_data():
     return data[['name', 'total_donations', 'donation_frequency', 'donation_volume', 'donation_variety_count']].copy()
 
 def rank_donators(data):
+    # Initialize MinMaxScaler to normalize each metric
     scaler = MinMaxScaler()
-    data.loc[:, 'normalized_donations'] = scaler.fit_transform(data[['total_donations']])
-    data.loc[:, 'normalized_volume'] = scaler.fit_transform(data[['donation_volume']])
-    data['score'] = data['normalized_donations'] * 0.5 + data['normalized_volume'] * 0.5
-    ranked_data = data.sort_values(by='score', ascending=False)
+
+    # Normalize each metric
+    data['normalized_donations'] = scaler.fit_transform(data[['total_donations']])
+    data['normalized_frequency'] = scaler.fit_transform(data[['donation_frequency']])
+    data['normalized_variety'] = scaler.fit_transform(data[['donation_variety_count']])
+    data['normalized_volume'] = scaler.fit_transform(data[['donation_volume']])
+
+    # Define weights for each metric
+    weight_donations = 0.4  # Heaviest weight for total monetary contribution
+    weight_frequency = 0.3  # High weight for consistent donations
+    weight_variety = 0.15   # Moderate weight for variety
+    weight_volume = 0.15    # Moderate weight for volume
+
+    # Calculate the weighted score
+    data['score'] = (
+        data['normalized_donations'] * weight_donations +
+        data['normalized_frequency'] * weight_frequency +
+        data['normalized_variety'] * weight_variety +
+        data['normalized_volume'] * weight_volume
+    )
+
+    # Sort by score in descending order and get the top 10
+    ranked_data = data.sort_values(by='score', ascending=False).head(10)
     return ranked_data
 
 def get_donation_data_by_type():
     individual_donations = Profile.objects.aggregate(total=Sum('total_donations'))['total'] or 0
     restaurant_donations = Restaurant.objects.aggregate(total=Sum('total_donations'))['total'] or 0
-    print(individual_donations)
-    print(restaurant_donations)
     donation_data = {
         'Individual': individual_donations,
         'Restaurant': restaurant_donations
@@ -41,8 +59,6 @@ def get_donor_location_distribution():
     location_data = Profile.objects.values('city').annotate(total=Count('id')).order_by('-total')
     labels = [data['city'] for data in location_data if data['city']]
     values = [data['total'] for data in location_data if data['city']]
-    print(labels)
-    print(values)
     return {
         'labels': labels,
         'values': values
@@ -51,6 +67,7 @@ def get_donor_location_distribution():
 def get_response_to_emergency_data():
     response_individual = Profile.objects.aggregate(sum=Sum('donation_frequency'))['sum'] or 0
     response_restaurant = Restaurant.objects.aggregate(sum=Sum('response_to_emergency_count'))['sum'] or 0
+
     return {
         'individual': response_individual,
         'restaurant': response_restaurant
@@ -89,9 +106,6 @@ def analytics_view(request):
     donation_data = get_donation_data_by_type()
     pie_chart_data = json.dumps(donation_data) 
 
-    print("Donation data:", donation_data)  # Debugging line to verify data
-    print("Pie chart data JSON:", pie_chart_data)
-
     # Fetch additional data for charts
     location_data = get_donor_location_distribution()
     response_emergency_data = get_response_to_emergency_data()
@@ -99,6 +113,7 @@ def analytics_view(request):
 
     # Serialize JSON data for JavaScript charts
     response_emergency_json = json.dumps(response_emergency_data)
+    print(response_emergency_json)
 
     context = {
         'funds_raised': funds_raised,
