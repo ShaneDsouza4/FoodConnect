@@ -113,13 +113,13 @@ def analytics_view(request):
 
     # Serialize JSON data for JavaScript charts
     response_emergency_json = json.dumps(response_emergency_data)
-    print(response_emergency_json)
 
     context = {
         'funds_raised': funds_raised,
         'progress_to_yearly_target': progress_to_yearly_target,
         'total_donors': total_donors,
         'ranked_donators': ranked_data[['name', 'total_donations', 'donation_volume', 'score']].to_dict(orient='records'),
+        'top_donor_name': ranked_data.iloc[0]['name'] if not ranked_data.empty else "No Donors",
         'total_volume': data['donation_volume'].sum(),
         'pie_chart_data': pie_chart_data,
         'response_emergency_data': response_emergency_json,
