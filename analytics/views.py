@@ -113,7 +113,6 @@ def analytics_view(request):
 
     # Serialize JSON data for JavaScript charts
     response_emergency_json = json.dumps(response_emergency_data)
-    print(response_emergency_json)
 
     context = {
         'funds_raised': funds_raised,
