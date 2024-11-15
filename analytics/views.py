@@ -19,22 +19,17 @@ def load_and_prepare_data():
     return data[['name', 'total_donations', 'donation_frequency', 'donation_volume', 'donation_variety_count']].copy()
 
 def rank_donators(data):
-    # Initialize MinMaxScaler to normalize each metric
     scaler = MinMaxScaler()
-
-    # Normalize each metric
     data['normalized_donations'] = scaler.fit_transform(data[['total_donations']])
     data['normalized_frequency'] = scaler.fit_transform(data[['donation_frequency']])
     data['normalized_variety'] = scaler.fit_transform(data[['donation_variety_count']])
     data['normalized_volume'] = scaler.fit_transform(data[['donation_volume']])
 
-    # Define weights for each metric
-    weight_donations = 0.4  # Heaviest weight for total monetary contribution
-    weight_frequency = 0.3  # High weight for consistent donations
-    weight_variety = 0.15   # Moderate weight for variety
-    weight_volume = 0.15    # Moderate weight for volume
+    weight_donations = 0.4
+    weight_frequency = 0.3
+    weight_variety = 0.15
+    weight_volume = 0.15
 
-    # Calculate the weighted score
     data['score'] = (
         data['normalized_donations'] * weight_donations +
         data['normalized_frequency'] * weight_frequency +
@@ -42,7 +37,6 @@ def rank_donators(data):
         data['normalized_volume'] * weight_volume
     )
 
-    # Sort by score in descending order and get the top 10
     ranked_data = data.sort_values(by='score', ascending=False).head(10)
     return ranked_data
 
