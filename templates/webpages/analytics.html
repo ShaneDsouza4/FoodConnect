@@ -1,8 +1,7 @@
 {% extends 'webpages/base.html' %}
-
 {% load static %}
 {% block content %}
-
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <div class="hero-wrap hero-bread" style="background-image: url('{% static "images/bg_1.jpg" %}');">
       <div class="container">
         <div class="row no-gutters slider-text align-items-center justify-content-center">
@@ -69,13 +68,48 @@
                                     <div class="card-header"><i class="fas fa-chart-pie me-1"></i> Donation by Donor Type</div>
                                     <div class="card-body">
                                         <canvas id="donationByDonorTypePieChart"></canvas>
+                            
                                         <script type="text/javascript">
-                                            var pieChartData = {{ pie_chart_data|safe }};
+                                            document.addEventListener('DOMContentLoaded', function() {
+                                                // Parse the JSON data directly from Django context, marked as safe
+                                                var pieChartData = {{ pie_chart_data|safe }};
+                                                
+                                                // Log data for debugging purposes
+                                                console.log("Parsed pie chart data:", pieChartData);
+                            
+                                                // Check if pieChartData contains data
+                                                if (Object.keys(pieChartData).length > 0) {
+                                                    var ctx = document.getElementById('donationByDonorTypePieChart').getContext('2d');
+                                                    var donationPieChart = new Chart(ctx, {
+                                                        type: 'pie',
+                                                        data: {
+                                                            labels: Object.keys(pieChartData),
+                                                            datasets: [{
+                                                                data: Object.values(pieChartData),
+                                                                backgroundColor: ['#ff6384', '#36a2eb'],  // Customize colors as needed
+                                                            }]
+                                                        },
+                                                        options: {
+                                                            responsive: true,
+                                                            plugins: {
+                                                                legend: {
+                                                                    position: 'top',
+                                                                },
+                                                                tooltip: {
+                                                                    enabled: true
+                                                                }
+                                                            }
+                                                        }
+                                                    });
+                                                } else {
+                                                    console.error("No data available for pie chart.");
+                                                }
+                                            });
                                         </script>
                                     </div>
                                 </div>
                             </div>
-
+                
                             <!-- Donor Location Distribution (Bar Chart) -->
                             <div class="card mb-4">
                                 <div class="card-header">

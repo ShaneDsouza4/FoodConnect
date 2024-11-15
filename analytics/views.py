@@ -29,7 +29,8 @@ def rank_donators(data):
 def get_donation_data_by_type():
     individual_donations = Profile.objects.aggregate(total=Sum('total_donations'))['total'] or 0
     restaurant_donations = Restaurant.objects.aggregate(total=Sum('total_donations'))['total'] or 0
-
+    print(individual_donations)
+    print(restaurant_donations)
     donation_data = {
         'Individual': individual_donations,
         'Restaurant': restaurant_donations
@@ -40,6 +41,8 @@ def get_donor_location_distribution():
     location_data = Profile.objects.values('city').annotate(total=Count('id')).order_by('-total')
     labels = [data['city'] for data in location_data if data['city']]
     values = [data['total'] for data in location_data if data['city']]
+    print(labels)
+    print(values)
     return {
         'labels': labels,
         'values': values
@@ -85,6 +88,9 @@ def analytics_view(request):
     progress_to_yearly_target = round((funds_raised / 1750) * 100, 2)
     donation_data = get_donation_data_by_type()
     pie_chart_data = json.dumps(donation_data) 
+
+    print("Donation data:", donation_data)  # Debugging line to verify data
+    print("Pie chart data JSON:", pie_chart_data)
 
     # Fetch additional data for charts
     location_data = get_donor_location_distribution()
