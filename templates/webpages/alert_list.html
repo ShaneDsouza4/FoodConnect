@@ -1,5 +1,4 @@
 {% extends 'webpages/base.html' %}
-
 {% load static %}
 {% block content %}
 
@@ -20,7 +19,7 @@
         <div class="row mb-5 pb-3">
             <div class="col-md-12">
                 <h2 class="mb-4 text-center">Alert List</h2>
-
+                
                 <table class="table table-bordered table-striped">
                     <thead>
                         <tr>
@@ -37,34 +36,20 @@
                         <tr>
                             <td>{{ alert.created_by.username }}</td>
                             <td>{{ alert.item_name }}</td>
-
-                            <td>
-                                {% if alert.total_quantity_donated %}
-                                    {{ alert.remaining_quantity_needed }}
-                                {% else %}
-                                    {{ alert.quantity_needed }}
-                                {% endif %}
-                            </td>
-
+                            <td>{{ alert.remaining_quantity_needed }}</td>
                             <td>{{ alert.description }}</td>
-
                             <td>
-                                {% if alert.latest_response %}
-                                    <span class="badge
-                                        {% if alert.latest_response.status == 'pending' %} badge-warning
-                                        {% elif alert.latest_response.status == 'in_progress' %} badge-primary
-                                        {% elif alert.latest_response.status == 'completed' %} badge-success
-                                        {% endif %}">
-                                        {{ alert.latest_response.status|capfirst }}
-                                    </span>
-                                {% else %}
-                                    <span class="badge badge-secondary">No Response</span>
-                                {% endif %}
+                                <span class="badge 
+                                    {% if alert.response_status == 'pending' %} badge-warning
+                                    {% elif alert.response_status == 'in_progress' %} badge-primary
+                                    {% elif alert.response_status == 'completed' %} badge-success
+                                    {% endif %}">
+                                    {{ alert.response_status|capfirst }}
+                                </span>
                             </td>
-
                             <td>
-                                {% if alert.latest_response %}
-                                    <a href="{% url 'response_status' alert.latest_response.id %}" class="btn btn-info btn-sm">View Status</a>
+                                {% if alert.response_status == 'completed' %}
+                                    <a href="{% url 'response_status' alert.id %}" class="btn btn-info btn-sm">View Status</a>
                                 {% else %}
                                     <a href="{% url 'donate' alert.id %}" class="btn btn-primary">Donate</a>
                                 {% endif %}

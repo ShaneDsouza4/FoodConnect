@@ -53,13 +53,17 @@ def create_alert(request):
 def alert_list(request):
     alerts = Alert.objects.filter(is_active=True)
     for alert in alerts:
-        alert.total_quantity_donated = alert.responses.aggregate(
-            total=Sum('quantity_donated')
-        )['total'] or 0
-        alert.remaining_quantity_needed = alert.quantity_needed - alert.total_quantity_donated
-        alert.latest_response = alert.responses.order_by('-created_at').first()
-    return render(request, 'webpages/alert_list.html', {'alerts': alerts})
+        total_donated = alert.responses.aggregate(total=Sum('quantity_donated'))['total'] or 0
+        alert.total_quantity_donated = total_donated
+        alert.remaining_quantity_needed = alert.quantity_needed - total_donated
+        if total_donated == 0:
+            alert.response_status = "pending"
+        elif total_donated < alert.quantity_needed:
+            alert.response_status = "in_progress"
+        else:
+            alert.response_status = "completed"
 
+    return render(request, 'webpages/alert_list.html', {'alerts': alerts})
 @login_required
 def ResponseToDonationView(request, alert_id):
     alert = get_object_or_404(Alert, id=alert_id)
