@@ -1,15 +1,25 @@
 from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator
 from django.shortcuts import render, redirect
 from django.contrib import messages
 
 from .forms import CreateDonationForm
-from donations.models import Donation
+from donations.models import Donation, Category, Product
 
 
 # Create your views here.
+
 def donations_view(request):
-    donations = Donation.objects.filter(is_active=True)  # Fetch active alerts
-    return render(request, '../templates/donations/donations.html', {'donations':donations})
+    categories = Category.objects.all()
+    category_id = request.GET.get('category_id')
+    if category_id:
+        products = Product.objects.filter(category_id=category_id)
+    else:
+        products = Product.objects.all()
+    paginator = Paginator(products, 8)
+    page_number = request.GET.get('page', 1)
+    page_obj = paginator.get_page(page_number)
+    return render(request, '../templates/donations/donations.html', {'products':page_obj, 'categories': categories, 'page_obj': page_obj,'current_category': int(category_id) if category_id else None,})
 
 @login_required
 def create_donation(request):
