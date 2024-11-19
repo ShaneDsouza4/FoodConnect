@@ -8,7 +8,32 @@ from django.db.models import Sum, Count
 from django.utils.timezone import now
 import json
 
-def load_and_prepare_data():
+def load_and_prepare_alldata():
+    # Profile dataset
+    profile_queryset = Profile.objects.all().values(
+        'first_name', 'last_name', 'total_donations', 'donation_frequency', 
+        'donation_volume', 'donation_variety_count', 'average_rating', 'response_to_emergency_count'
+    )
+    profile_data = pd.DataFrame(list(profile_queryset))
+    profile_data.fillna(0, inplace=True)
+    profile_data['name'] = profile_data['first_name'].astype(str) + ' ' + profile_data['last_name'].astype(str)
+
+    # Restaurant dataset
+    restaurant_queryset = Restaurant.objects.all().values(
+        'restaurant_name', 'total_donations', 'donation_frequency', 
+        'donation_volume', 'donation_variety_count', 'average_rating', 'response_to_emergency_count'
+    )
+    restaurant_data = pd.DataFrame(list(restaurant_queryset))
+    restaurant_data.fillna(0, inplace=True)
+    restaurant_data.rename(columns={'restaurant_name': 'name'}, inplace=True)
+
+    # Combined dataset
+    combined_data = pd.concat([profile_data, restaurant_data], ignore_index=True)
+    
+    return combined_data[['name', 'total_donations', 'donation_frequency', 'donation_volume', 
+                          'donation_variety_count', 'average_rating', 'response_to_emergency_count']].copy()
+
+def load_and_prepare_individual_data():
     queryset = Profile.objects.all().values(
         'first_name', 'last_name', 'total_donations', 'donation_frequency', 
         'donation_volume', 'donation_variety_count', 'average_rating', 'response_to_emergency_count'
@@ -16,6 +41,16 @@ def load_and_prepare_data():
     data = pd.DataFrame(list(queryset))
     data.fillna(0, inplace=True)
     data['name'] = data['first_name'].astype(str) + ' ' + data['last_name'].astype(str)
+    return data[['name', 'total_donations', 'donation_frequency', 'donation_volume', 'donation_variety_count',  'average_rating', 'response_to_emergency_count']].copy()
+
+def load_and_prepare_restaurant_data():
+    queryset = Restaurant.objects.all().values(
+        'restaurant_name', 'total_donations', 'donation_frequency', 
+        'donation_volume', 'donation_variety_count', 'average_rating', 'response_to_emergency_count'
+    )
+    data = pd.DataFrame(list(queryset))
+    data.fillna(0, inplace=True)
+    data.rename(columns={'restaurant_name': 'name'}, inplace=True)
     return data[['name', 'total_donations', 'donation_frequency', 'donation_volume', 'donation_variety_count',  'average_rating', 'response_to_emergency_count']].copy()
 
 def rank_donators(data):
@@ -107,8 +142,12 @@ def predict_future_alerts():
     return future_alerts
 
 def analytics_view(request):
-    data = load_and_prepare_data()
-    ranked_data = rank_donators(data)
+    all_data = load_and_prepare_alldata()
+    individual_data = load_and_prepare_individual_data()
+    restaurant_data = load_and_prepare_restaurant_data()
+    ranked_data = rank_donators(all_data)
+    individual_ranked_data = rank_donators(individual_data)
+    restaurant_ranked_data = rank_donators(restaurant_data)
     funds_raised = Profile.objects.aggregate(total=Sum('total_donations'))['total'] or 0
     total_donors = Profile.objects.count() + Restaurant.objects.count()
     progress_to_yearly_target = round((funds_raised / 1750) * 100, 2)
@@ -124,8 +163,12 @@ def analytics_view(request):
         'progress_to_yearly_target': progress_to_yearly_target,
         'total_donors': total_donors,
         'ranked_donators': ranked_data[['name', 'total_donations', 'donation_volume', 'score']].to_dict(orient='records'),
+        'ranked_individual_donators': individual_ranked_data[['name', 'total_donations', 'donation_volume', 'score']].to_dict(orient='records'),
+        'ranked_restaurant_donators': restaurant_ranked_data[['name', 'total_donations', 'donation_volume', 'score']].to_dict(orient='records'),
         'top_donor_name': ranked_data.iloc[0]['name'] if not ranked_data.empty else "No Donors",
-        'total_volume': data['donation_volume'].sum(),
+        'top_individual_donor_name': individual_ranked_data.iloc[0]['name'] if not individual_ranked_data.empty else "No Donors",
+        'top_restaurant_donor_name': restaurant_ranked_data.iloc[0]['name'] if not restaurant_ranked_data.empty else "No Donors",
+        'total_volume': all_data['donation_volume'].sum(),
         'pie_chart_data': pie_chart_data,
         'response_emergency_data': response_emergency_json,
         'location_data': json.dumps(location_data),
