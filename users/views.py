@@ -66,25 +66,36 @@ def register_user(request):
     else:
         return render(request, 'webpages/register.html', {"form": form})
 
+# Restaurant Signup View
 def signup_restaurant(request):
     if request.method == 'POST':
+        # Take all inputs from webpage, and put in signup form
         form = CreateRestaurantForm(request.POST, request.FILES)
-        if form.is_valid():
 
+        # If user has filled the form
+        if form.is_valid():
             username = form.cleaned_data['username']
             password = form.cleaned_data['password']
             email = form.cleaned_data['email']
 
+            # Check if username exists in the DB
             if User.objects.filter(username=username).exists():
                 messages.error(request, 'Username already exists. Please choose a different one.')
-                return redirect('restaurant_signup')
+                return render(request, 'webpages/restaurant_signup.html', {'form': form})
 
+            # Check if email exists in the DB
+            if User.objects.filter(email=email).exists():
+                messages.error(request, 'Email already exists. Please choose a different one.')
+                return render(request, 'webpages/restaurant_signup.html', {'form': form})
+
+            # Create new Restaruant User
             user = User.objects.create_user(
                 username=username,
                 email=email,
                 password=password
             )
 
+            # Profile for the restaurant user with additional fields
             restaurant = Restaurant.objects.create(
                 user=user,
                 restaurant_name=form.cleaned_data['restaurant_name'],
@@ -100,6 +111,7 @@ def signup_restaurant(request):
             )
             restaurant.save()
 
+            # Authenticate and Login
             user = authenticate(username=username, password=password)
             if user is not None:
                 login(request, user)
@@ -110,8 +122,8 @@ def signup_restaurant(request):
             messages.success(request, 'Error: There was a problem registering, please try again.')
             return redirect('restaurant_signup')
     else:
-        restaurantform = CreateRestaurantForm()
-        return render(request, 'webpages/retaurant_signup.html', {'form': restaurantform})
+        restaurantform = CreateRestaurantForm() #Empty Form
+        return render(request, 'webpages/restaurant_signup.html', {'form': restaurantform})
 
 def signup_foodbank(request):
     if request.method == 'POST':

@@ -81,10 +81,10 @@ class CreateRestaurantForm(forms.Form):
 		max_length=100,
 		widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'City'})
 	)
-	state = forms.CharField(
+	state = forms.ChoiceField(
 		label="State",
-		max_length=100,
-		widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'State'})
+		choices=CANADA_PROVINCES_AND_TERRITORIES,
+		widget=forms.Select(attrs={'class': 'form-control'})
 	)
 	country = forms.CharField(
 		label="Country",
