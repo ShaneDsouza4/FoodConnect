@@ -2,6 +2,23 @@ from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 from django import forms
 
+CANADA_PROVINCES_AND_TERRITORIES = [
+	('', 'Select State'),
+    ('AB', 'Alberta'),
+    ('BC', 'British Columbia'),
+    ('MB', 'Manitoba'),
+    ('NB', 'New Brunswick'),
+    ('NL', 'Newfoundland and Labrador'),
+    ('NS', 'Nova Scotia'),
+    ('ON', 'Ontario'),
+    ('PE', 'Prince Edward Island'),
+    ('QC', 'Quebec'),
+    ('SK', 'Saskatchewan'),
+    ('NT', 'Northwest Territories'),
+    ('NU', 'Nunavut'),
+    ('YT', 'Yukon')
+]
+
 class SignUpForm(UserCreationForm):
 	email = forms.EmailField(label="", widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'Email Address'}))
 	first_name = forms.CharField(label="", max_length=100, widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'First Name'}))
@@ -107,16 +124,60 @@ class CreateFoodBankForm(forms.Form):
 
 # Individual Form
 class CreateIndividualForm(forms.Form):
-    username = forms.CharField(label="Username", max_length=150, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Username'}))
-    password = forms.CharField(label="Password", widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Password'}))
-    first_name = forms.CharField(label="First Name", max_length=30, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'First Name'}))
-    last_name = forms.CharField(label="Last Name", max_length=30, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Last Name'}))
-    email = forms.EmailField(label="Email Address", widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Email Address'}))
-    phone_number = forms.CharField(label="Phone Number", max_length=20, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Phone Number'}))
-    street_address = forms.CharField(label="Street Address", max_length=255, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Street'}))
-    city = forms.CharField(label="City", max_length=100, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'City'}))
-    state = forms.CharField(label="State", max_length=100, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'State'}))
-    country = forms.CharField(label="Country", max_length=100, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Country'}))
-    id_verification = forms.ImageField(label="ID Verification (optional)", required=False, widget=forms.ClearableFileInput(attrs={'class': 'form-control'}))
-
-
+    username = forms.CharField(
+		label="Username",
+		max_length=150,
+		widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Username'})
+	)
+    password = forms.CharField(
+		label="Password",
+		widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Password'})
+	)
+    first_name = forms.CharField(
+		label="First Name",
+		max_length=30,
+		widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'First Name'})
+	)
+    last_name = forms.CharField(
+		label="Last Name",
+		max_length=30,
+		widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Last Name'})
+	)
+    email = forms.EmailField(
+		label="Email Address",
+		widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Email Address'})
+	)
+    phone_number = forms.CharField(
+		label="Phone Number",
+		max_length=20,
+		widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Phone Number'})
+	)
+    street_address = forms.CharField(
+		label="Street Address",
+		max_length=255, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Street'})
+	)
+    city = forms.CharField(
+		label="City",
+		max_length=100,
+		widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'City'})
+	)
+    state = forms.ChoiceField(
+		label="State",
+		choices=CANADA_PROVINCES_AND_TERRITORIES,
+		widget=forms.Select(attrs={'class': 'form-control'})
+	)
+    country = forms.CharField(
+		label="Country",
+		max_length=100,
+		widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Country'})
+	)
+    postal_code = forms.CharField(
+		label="Postal Code",
+		max_length=100,
+		widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Postal Code'})
+	)
+    id_verification = forms.ImageField(
+		label="ID Verification (optional)",
+		required=True,
+		widget=forms.ClearableFileInput(attrs={'class': 'form-control'})
+	)

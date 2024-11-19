@@ -10,13 +10,9 @@
                 <li class="nav-item active"><a href="{% url 'landing' %}" class="nav-link">Home</a></li>
                 <li class="nav-item"><a class="nav-link" href="{% url 'about' %}">About</a></li>
                 <li class="nav-item"><a class="nav-link" href="{% url 'contact_us' %}">Contact</a></li>
-                <li class="nav-item"><a class="nav-link" href="{% url 'analytics' %}">Analytics</a></li>  
-                <li class="nav-item"><a class="nav-link">Contact</a></li>
-                             <li class="nav-item"><a class="nav-link" href="{% url 'donations' %}">Donations</a></li>  
-
-                <li class="nav-item"><a class="nav-link" href="{% url 'analytics' %}">Analytics</a></li> 
-
-                <li class="nav-item"><a class="nav-link" href="{% url 'alert_list' %}">Alert List</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'donations' %}">Donations</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'analytics' %}">Analytics</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'alert_list' %}">Alerts</a></li>
 
                 {% if user.is_authenticated %}
                     <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}">Logout</a></li>
@@ -32,14 +28,14 @@
                     </li>
                 {% endif %}
 
-                <!-- Cart Icon -->
-                <li class="nav-item cta cta-colored">
+                <!-- Cart  -->
+                <!-- <li class="nav-item cta cta-colored">
                     <a class="nav-link"><span class="icon-shopping_cart"></span>[0]</a>
-                </li>
+                </li> -->
             
                 <!-- Alerts Button -->
                 <li class="nav-item">
-                    <a href="{% url 'alerts' %}" class="nav-link btn btn-danger text-white mr-2">Alerts</a>
+                    <a href="{% url 'alerts' %}" class="nav-link btn btn-danger text-white m-2">Add Alert +</a>
                 </li>
             </ul>
         </div>

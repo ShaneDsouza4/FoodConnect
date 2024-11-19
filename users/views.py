@@ -155,20 +155,32 @@ def signup_foodbank(request):
     foodbankform = CreateFoodBankForm()
     return render(request, 'webpages/foodbank_signup.html', {'form': foodbankform})
 
+# Individual Signup Form View
 def signup_individual(request):
     if request.method == 'POST':
+        # Take all inputs from webpage, and put in signup form
         form = CreateIndividualForm(request.POST, request.FILES)
+
+        # If user has filled the form
         if form.is_valid():
             username = form.cleaned_data['username']
             password = form.cleaned_data['password']
             email = form.cleaned_data['email']
 
+            # Check if username exists in the DB
             if User.objects.filter(username=username).exists():
                 messages.error(request, 'Username already exists. Please choose a different one.')
-                return redirect('individual_signup')
+                return render(request, 'webpages/individual_signup.html', {'form': form})
 
+            # Check if email exists in the DB
+            if User.objects.filter(email=email).exists():
+                messages.error(request, 'Email already exists. Please choose a different one.')
+                return render(request, 'webpages/individual_signup.html', {'form': form})
+
+            # Create new User
             user = User.objects.create_user(username=username, email=email, password=password)
 
+            # Profile for the user with additional fields
             profile = Profile.objects.create(
                 user=user,
                 first_name=form.cleaned_data['first_name'],
@@ -178,10 +190,12 @@ def signup_individual(request):
                 city=form.cleaned_data['city'],
                 state=form.cleaned_data['state'],
                 country=form.cleaned_data['country'],
+                postal_code=form.cleaned_data['postal_code'],
                 id_verification=form.cleaned_data['id_verification']
             )
             profile.save()
 
+            # Authenticate new user and log them in
             user = authenticate(username=username, password=password)
             if user is not None:
                 login(request, user)
@@ -192,7 +206,7 @@ def signup_individual(request):
             messages.error(request, 'There was a problem with your registration. Please try again.')
             return redirect('individual_signup')
 
-    form = CreateIndividualForm()
+    form = CreateIndividualForm() #Empty Form
     return render(request, 'webpages/individual_signup.html', {'form': form})
 
 def signup_view(request):
