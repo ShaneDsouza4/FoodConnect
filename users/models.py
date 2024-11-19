@@ -55,7 +55,6 @@ class Restaurant(models.Model):
     country = models.CharField(max_length=100, default='Canada')
     postal_code = models.CharField(max_length=20)
     website = models.URLField(blank=True, null=True)
-
     id_verification = models.ImageField(upload_to='id_cards/', blank=True, null=True)
     is_verified = models.BooleanField(default=False)
 

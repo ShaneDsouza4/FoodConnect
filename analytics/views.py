@@ -8,41 +8,77 @@ from django.db.models import Sum, Count
 from django.utils.timezone import now
 import json
 
-def load_and_prepare_data():
+def load_and_prepare_alldata():
+    # Profile dataset
+    profile_queryset = Profile.objects.all().values(
+        'first_name', 'last_name', 'total_donations', 'donation_frequency', 
+        'donation_volume', 'donation_variety_count', 'average_rating', 'response_to_emergency_count'
+    )
+    profile_data = pd.DataFrame(list(profile_queryset))
+    profile_data.fillna(0, inplace=True)
+    profile_data['name'] = profile_data['first_name'].astype(str) + ' ' + profile_data['last_name'].astype(str)
+
+    # Restaurant dataset
+    restaurant_queryset = Restaurant.objects.all().values(
+        'restaurant_name', 'total_donations', 'donation_frequency', 
+        'donation_volume', 'donation_variety_count', 'average_rating', 'response_to_emergency_count'
+    )
+    restaurant_data = pd.DataFrame(list(restaurant_queryset))
+    restaurant_data.fillna(0, inplace=True)
+    restaurant_data.rename(columns={'restaurant_name': 'name'}, inplace=True)
+
+    # Combined dataset
+    combined_data = pd.concat([profile_data, restaurant_data], ignore_index=True)
+    
+    return combined_data[['name', 'total_donations', 'donation_frequency', 'donation_volume', 
+                          'donation_variety_count', 'average_rating', 'response_to_emergency_count']].copy()
+
+def load_and_prepare_individual_data():
     queryset = Profile.objects.all().values(
         'first_name', 'last_name', 'total_donations', 'donation_frequency', 
-        'donation_volume', 'donation_variety_count'
+        'donation_volume', 'donation_variety_count', 'average_rating', 'response_to_emergency_count'
     )
     data = pd.DataFrame(list(queryset))
     data.fillna(0, inplace=True)
     data['name'] = data['first_name'].astype(str) + ' ' + data['last_name'].astype(str)
-    return data[['name', 'total_donations', 'donation_frequency', 'donation_volume', 'donation_variety_count']].copy()
+    return data[['name', 'total_donations', 'donation_frequency', 'donation_volume', 'donation_variety_count',  'average_rating', 'response_to_emergency_count']].copy()
+
+def load_and_prepare_restaurant_data():
+    queryset = Restaurant.objects.all().values(
+        'restaurant_name', 'total_donations', 'donation_frequency', 
+        'donation_volume', 'donation_variety_count', 'average_rating', 'response_to_emergency_count'
+    )
+    data = pd.DataFrame(list(queryset))
+    data.fillna(0, inplace=True)
+    data.rename(columns={'restaurant_name': 'name'}, inplace=True)
+    return data[['name', 'total_donations', 'donation_frequency', 'donation_volume', 'donation_variety_count',  'average_rating', 'response_to_emergency_count']].copy()
 
 def rank_donators(data):
-    # Initialize MinMaxScaler to normalize each metric
     scaler = MinMaxScaler()
-
-    # Normalize each metric
     data['normalized_donations'] = scaler.fit_transform(data[['total_donations']])
     data['normalized_frequency'] = scaler.fit_transform(data[['donation_frequency']])
     data['normalized_variety'] = scaler.fit_transform(data[['donation_variety_count']])
     data['normalized_volume'] = scaler.fit_transform(data[['donation_volume']])
+    data['normalized_rating'] = scaler.fit_transform(data[['average_rating']])
+    data['normalized_emergency_response'] = scaler.fit_transform(data[['response_to_emergency_count']])
 
-    # Define weights for each metric
-    weight_donations = 0.4  # Heaviest weight for total monetary contribution
-    weight_frequency = 0.3  # High weight for consistent donations
-    weight_variety = 0.15   # Moderate weight for variety
-    weight_volume = 0.15    # Moderate weight for volume
+    weight_donations = 0.4
+    weight_frequency = 0.15
+    weight_variety = 0.05
+    weight_volume = 0.1
+    weight_rating = 0.1
+    weight_emergency_response = 0.2
 
-    # Calculate the weighted score
+
     data['score'] = (
         data['normalized_donations'] * weight_donations +
         data['normalized_frequency'] * weight_frequency +
         data['normalized_variety'] * weight_variety +
-        data['normalized_volume'] * weight_volume
+        data['normalized_volume'] * weight_volume +
+        data['normalized_rating'] * weight_rating +
+        data['normalized_emergency_response'] * weight_emergency_response
     )
 
-    # Sort by score in descending order and get the top 10
     ranked_data = data.sort_values(by='score', ascending=False).head(10)
     return ranked_data
 
@@ -65,7 +101,7 @@ def get_donor_location_distribution():
     }
 
 def get_response_to_emergency_data():
-    response_individual = Profile.objects.aggregate(sum=Sum('donation_frequency'))['sum'] or 0
+    response_individual = Profile.objects.aggregate(sum=Sum('response_to_emergency_count'))['sum'] or 0
     response_restaurant = Restaurant.objects.aggregate(sum=Sum('response_to_emergency_count'))['sum'] or 0
 
     return {
@@ -84,47 +120,59 @@ def load_alert_data():
 def predict_future_alerts():
     data = load_alert_data()
     daily_alerts = data.resample('D').size()
-    
+
     if daily_alerts.empty:
-        return { (pd.Timestamp.now() + timedelta(days=i)).strftime('%Y-%m-%d'): 0.0 for i in range(1, 8) }
+        return { (pd.Timestamp.now() + timedelta(days=i)).strftime('%Y-%m-%d'): 0 for i in range(1, 8) }
 
-    window_size = min(7, len(daily_alerts))
-    data['7_day_avg'] = daily_alerts.rolling(window=window_size).mean()
-    recent_avg = data['7_day_avg'].iloc[-window_size:].mean() if not data['7_day_avg'].iloc[-window_size:].isna().all() else 0
-    last_date = data.index[-1]
-    future_dates = [last_date + timedelta(days=i) for i in range(1, 8)]
-    future_predictions = {date.strftime('%Y-%m-%d'): recent_avg for date in future_dates}
+    daily_alerts.index = daily_alerts.index.dayofweek
+    avg_by_day = daily_alerts.groupby(daily_alerts.index).mean()
+    future_dates = [pd.Timestamp.now() + timedelta(days=i) for i in range(1, 8)]
+    future_days_of_week = [date.weekday() for date in future_dates]
 
-    return future_predictions
+    future_predictions = [
+        max(0, int(avg_by_day.get(day, 0)))
+        for day in future_days_of_week
+    ]
+
+    future_alerts = {
+        date.strftime('%Y-%m-%d'): pred
+        for date, pred in zip(future_dates, future_predictions)
+    }
+
+    return future_alerts
 
 def analytics_view(request):
-    data = load_and_prepare_data()
-    ranked_data = rank_donators(data)
+    all_data = load_and_prepare_alldata()
+    individual_data = load_and_prepare_individual_data()
+    restaurant_data = load_and_prepare_restaurant_data()
+    ranked_data = rank_donators(all_data)
+    individual_ranked_data = rank_donators(individual_data)
+    restaurant_ranked_data = rank_donators(restaurant_data)
     funds_raised = Profile.objects.aggregate(total=Sum('total_donations'))['total'] or 0
     total_donors = Profile.objects.count() + Restaurant.objects.count()
     progress_to_yearly_target = round((funds_raised / 1750) * 100, 2)
     donation_data = get_donation_data_by_type()
     pie_chart_data = json.dumps(donation_data) 
-
-    # Fetch additional data for charts
     location_data = get_donor_location_distribution()
     response_emergency_data = get_response_to_emergency_data()
-    future_alerts = predict_future_alerts()
-
-    # Serialize JSON data for JavaScript charts
     response_emergency_json = json.dumps(response_emergency_data)
+    future_alerts = predict_future_alerts()
 
     context = {
         'funds_raised': funds_raised,
         'progress_to_yearly_target': progress_to_yearly_target,
         'total_donors': total_donors,
         'ranked_donators': ranked_data[['name', 'total_donations', 'donation_volume', 'score']].to_dict(orient='records'),
+        'ranked_individual_donators': individual_ranked_data[['name', 'total_donations', 'donation_volume', 'score']].to_dict(orient='records'),
+        'ranked_restaurant_donators': restaurant_ranked_data[['name', 'total_donations', 'donation_volume', 'score']].to_dict(orient='records'),
         'top_donor_name': ranked_data.iloc[0]['name'] if not ranked_data.empty else "No Donors",
-        'total_volume': data['donation_volume'].sum(),
+        'top_individual_donor_name': individual_ranked_data.iloc[0]['name'] if not individual_ranked_data.empty else "No Donors",
+        'top_restaurant_donor_name': restaurant_ranked_data.iloc[0]['name'] if not restaurant_ranked_data.empty else "No Donors",
+        'total_volume': all_data['donation_volume'].sum(),
         'pie_chart_data': pie_chart_data,
         'response_emergency_data': response_emergency_json,
         'location_data': json.dumps(location_data),
-        'future_alerts': future_alerts,
+        'future_alerts': json.dumps(future_alerts),
     }
 
     return render(request, 'webpages/analytics.html', context)
