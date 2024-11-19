@@ -180,20 +180,41 @@
                                 });
                             </script>
                 
-                            <!-- Donor Location Distribution (Bar Chart) -->
-                            <div class="card mb-4">
-                                <div class="card-header">
-                                    <i class="fas fa-chart-bar me-1"></i> Donor Location Distribution
+                            <!-- Charts Row -->
+                            <div class="row mb-5 pb-3 justify-content-center">
+                                <!-- Donor Location Distribution (Bar Chart) -->
+                                <div class="col-xl-6">
+                                    <div class="card mb-4">
+                                        <div class="card-header">
+                                            <i class="fas fa-chart-bar me-1"></i> Donor Location Distribution
+                                        </div>
+                                        <div class="card-body">
+                                            <canvas id="donorLocationDistributionChart"></canvas>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="card-body">
-                                    <canvas id="donorLocationDistributionChart"></canvas>
+                                
+                                <!-- Predicted Alerts Line Chart -->
+                                <div class="col-xl-6">
+                                    <div class="card mb-4">
+                                        <div class="card-header">
+                                            <i class="fas fa-chart-line me-1"></i> Predicted Alerts (Next 7 Days)
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="chart-container">
+                                                <canvas id="predictedAlertsLineChart"></canvas>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
+
                             <script>
-                                document.addEventListener('DOMContentLoaded', function() {
+                                // Donor Location Distribution Chart
+                                document.addEventListener('DOMContentLoaded', function () {
                                     var locationData = JSON.parse('{{ location_data|safe }}');
                                     var ctx = document.getElementById('donorLocationDistributionChart').getContext('2d');
-                                    var donorLocationDistributionChart = new Chart(ctx, {
+                                    new Chart(ctx, {
                                         type: 'bar',
                                         data: {
                                             labels: locationData.labels,
@@ -222,54 +243,48 @@
                                         }
                                     });
                                 });
-                                </script>
-                                
-                                <!-- Future Alerts Prediction (Line Chart) -->
-                                <div class="col-xl-6">
-                                    <div class="card mb-4">
-                                        <div class="card-header"><i class="fas fa-chart-line me-1"></i> Future Alerts Prediction</div>
-                                        <div class="card-body">
-                                            <canvas id="futureAlertsLineChart"></canvas>
-                                        </div>
-                                    </div>
-                                </div>
-                                <script>
+
+                                // Predicted Alerts Line Chart
                                 document.addEventListener('DOMContentLoaded', function () {
-                                    var canvas = document.getElementById('futureAlertsLineChart');
-                                    if (!canvas) {
-                                        console.error("Canvas element with ID 'futureAlertsLineChart' not found.");
-                                        return; // Exit if the element is missing
+                                    var ctx = document.getElementById('predictedAlertsLineChart');
+                                    if (!ctx) {
+                                        console.error("Canvas element with ID 'predictedAlertsLineChart' not found.");
+                                        return;
                                     }
+                                    ctx = ctx.getContext('2d');
 
-                                    var futureAlertsData = {{ future_alerts|safe }};
-                                    
-                                    // Validate futureAlertsData
-                                    if (!futureAlertsData || Object.keys(futureAlertsData).length === 0) {
-                                        console.error("Future Alerts Data is empty or undefined:", futureAlertsData);
-                                        return; // Exit if no data is available
-                                    }
+                                    var futureAlerts = JSON.parse('{{ future_alerts|safe }}');
+                                    console.log("Future Alerts Data:", futureAlerts);
 
-                                    var labels = Object.keys(futureAlertsData);
-                                    var data = Object.values(futureAlertsData);
+                                    var alertDates = Object.keys(futureAlerts);
+                                    var alertValues = Object.values(futureAlerts);
 
-                                    var ctx = canvas.getContext('2d');
                                     new Chart(ctx, {
                                         type: 'line',
                                         data: {
-                                            labels: labels,
+                                            labels: alertDates,
                                             datasets: [{
                                                 label: 'Predicted Alerts',
-                                                data: data,
-                                                backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                                                borderColor: 'rgba(54, 162, 235, 1)',
+                                                data: alertValues,
+                                                borderColor: 'rgba(75, 192, 192, 1)',
+                                                backgroundColor: 'rgba(75, 192, 192, 0.2)',
                                                 borderWidth: 2,
-                                                fill: true,
-                                                tension: 0.4
+                                                pointStyle: 'circle',
+                                                pointRadius: 4,
+                                                pointHoverRadius: 6
                                             }]
                                         },
                                         options: {
                                             responsive: true,
-                                            maintainAspectRatio: false,
+                                            plugins: {
+                                                legend: {
+                                                    display: true,
+                                                    position: 'top'
+                                                },
+                                                tooltip: {
+                                                    enabled: true
+                                                }
+                                            },
                                             scales: {
                                                 x: {
                                                     title: {
@@ -277,29 +292,23 @@
                                                         text: 'Date'
                                                     },
                                                     ticks: {
-                                                        maxTicksLimit: 4
+                                                        autoSkip: true,
+                                                        maxRotation: 45,
+                                                        minRotation: 0
                                                     }
                                                 },
                                                 y: {
-                                                    beginAtZero: true,
                                                     title: {
                                                         display: true,
                                                         text: 'Number of Alerts'
-                                                    }
-                                                }
-                                            },
-                                            plugins: {
-                                                legend: {
-                                                    display: true,
-                                                    position: 'top'
+                                                    },
+                                                    beginAtZero: true
                                                 }
                                             }
                                         }
                                     });
                                 });
-
-
-                                </script>                                         
+                            </script>                       
                         </div>
 
                         <div class="card mb-4">

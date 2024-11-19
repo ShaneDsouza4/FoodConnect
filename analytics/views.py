@@ -1,8 +1,10 @@
 from datetime import timedelta
 import pandas as pd
+import numpy as np
 from django.shortcuts import render
 from users.models import Profile, Restaurant
 from alerts.models import Alert
+from sklearn.linear_model import LinearRegression
 from sklearn.preprocessing import MinMaxScaler
 from django.db.models import Sum, Count
 from django.utils.timezone import now
@@ -82,30 +84,31 @@ def load_alert_data():
     
     return data
 
+import numpy as np
+
 def predict_future_alerts():
     data = load_alert_data()
     daily_alerts = data.resample('D').size()
-    
+
     if daily_alerts.empty:
-        return { (pd.Timestamp.now() + timedelta(days=i)).strftime('%Y-%m-%d'): 0.0 for i in range(1, 8) }
+        return { (pd.Timestamp.now() + timedelta(days=i)).strftime('%Y-%m-%d'): 0 for i in range(1, 8) }
 
-    # Rolling average calculation
-    window_size = min(7, len(daily_alerts))
-    daily_alerts_rolling_avg = daily_alerts.rolling(window=window_size).mean()
+    daily_alerts.index = daily_alerts.index.dayofweek
+    avg_by_day = daily_alerts.groupby(daily_alerts.index).mean()
+    future_dates = [pd.Timestamp.now() + timedelta(days=i) for i in range(1, 8)]
+    future_days_of_week = [date.weekday() for date in future_dates]
 
-    recent_avg = daily_alerts_rolling_avg[-window_size:].mean() if not daily_alerts_rolling_avg.isna().all() else 0
+    future_predictions = [
+        max(0, int(avg_by_day.get(day, 0)))
+        for day in future_days_of_week
+    ]
 
-    # Generate future predictions
-    last_date = daily_alerts.index[-1]
-    future_dates = [last_date + timedelta(days=i) for i in range(1, 8)]
-    future_predictions = {date.strftime('%Y-%m-%d'): recent_avg for date in future_dates}
+    future_alerts = {
+        date.strftime('%Y-%m-%d'): pred
+        for date, pred in zip(future_dates, future_predictions)
+    }
 
-    print("Daily Alerts Data:", daily_alerts)
-    print("Rolling Avg Data:", daily_alerts_rolling_avg)
-    print("Recent Avg:", recent_avg)
-
-
-    return future_predictions
+    return future_alerts
 
 def analytics_view(request):
     data = load_and_prepare_data()
@@ -118,7 +121,7 @@ def analytics_view(request):
     location_data = get_donor_location_distribution()
     response_emergency_data = get_response_to_emergency_data()
     response_emergency_json = json.dumps(response_emergency_data)
-    future_alerts = predict_future_alerts()    
+    future_alerts = predict_future_alerts()
 
     context = {
         'funds_raised': funds_raised,
@@ -130,7 +133,7 @@ def analytics_view(request):
         'pie_chart_data': pie_chart_data,
         'response_emergency_data': response_emergency_json,
         'location_data': json.dumps(location_data),
-        'future_alerts': future_alerts,
+        'future_alerts': json.dumps(future_alerts),
     }
 
     return render(request, 'webpages/analytics.html', context)
