@@ -1,10 +1,8 @@
 from datetime import timedelta
 import pandas as pd
-import numpy as np
 from django.shortcuts import render
 from users.models import Profile, Restaurant
 from alerts.models import Alert
-from sklearn.linear_model import LinearRegression
 from sklearn.preprocessing import MinMaxScaler
 from django.db.models import Sum, Count
 from django.utils.timezone import now
@@ -83,8 +81,6 @@ def load_alert_data():
     data.set_index('date_created', inplace=True)
     
     return data
-
-import numpy as np
 
 def predict_future_alerts():
     data = load_alert_data()
