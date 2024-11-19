@@ -4,17 +4,21 @@
 {% block content %}
 
     <!-- Hero Start -->
-    <div class="hero-wrap hero-bread" style="background-image: url('{% static "images/bg_1.jpg" %}');">
-        <div class="container">
-            <div class="row no-gutters slider-text align-items-center justify-content-center">
-                <div class="col-md-9 ftco-animate text-center">
-                    <h1 class="mb-0 bread">DONATE!</h1>
-                </div>
-            </div>
+    <div class="hero-wrap hero-bread" style="background-image: url('{% static "images/bg-donate.jpg" %}');">
+      <div class="container">
+        <div class="row no-gutters slider-text align-items-center justify-content-center">
+          <div class="col-md-9 ftco-animate text-center">
+          	<p class="breadcrumbs">
+                <span>View and Manage Requests for Assistance.</span>
+            </p>
+            <p class="mb-0 bread">Donate</p>
+          </div>
         </div>
+      </div>
     </div>
     <!-- Hero End -->
-<div class="container">
+
+    <!--<div class="container">
         <h2>Respond to Donation Alert for {{ alert.item_name }}</h2>
         <form method="POST">
             {% csrf_token %}
@@ -25,6 +29,23 @@
             {{ form.description.label_tag }} {{ form.description }}  
             <button type="submit" class="btn btn-primary">Submit Response</button>
         </form>
-    </div>
+    </div>-->
+    
+    <section class="ftco-section testimony-section">
+      <div class="container">
+        <div class="row mb-5 pb-3">
+          <div class="col-md-6 offset-md-3">
+              <h2 class="mb-4">Respond to Donation Alert for {{ alert.item_name }}</h2>
+          
+              <form method="post">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit" class="btn btn-primary">Submit</button>
+              </form>
+
+          </div>
+        </div>
+      </div>
+    </section>
 
 {% endblock %}

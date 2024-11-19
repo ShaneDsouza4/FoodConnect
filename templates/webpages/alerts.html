@@ -5,11 +5,14 @@
 {% block content %}
 
     <!-- Hero Start -->
-    <div class="hero-wrap hero-bread" style="background-image: url('{% static "images/bg_1.jpg" %}');">
+    <div class="hero-wrap hero-bread" style="background-image: url('{% static "images/alert-bg.jpg" %}');">
       <div class="container">
         <div class="row no-gutters slider-text align-items-center justify-content-center">
           <div class="col-md-9 ftco-animate text-center">
-            <h1 class="mb-0 bread">ALERTS</h1>
+          	<p class="breadcrumbs">
+                <span>Reach out to donors and partners who can help your food bank today.</span>
+            </p>
+            <p class="mb-0 bread">Submit an Alert for Assistance</p>
           </div>
         </div>
       </div>
@@ -20,14 +23,14 @@
       <div class="container">
         <div class="row mb-5 pb-3">
           <div class="col-md-6 offset-md-3">
-            <h2 class="mb-4">Please Submit your Request</h2>
-
+              <h2 class="mb-4">Please Submit your Request</h2>
+              <p>If your food bank is in need of specific items or resources, submit a detailed alert to notify donors. FoodConnect empowers you to connect with supporters quickly and efficiently, ensuring no one in your community goes without.</p>
           
-<form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit" class="btn btn-primary">Submit Alert</button>
-    </form>
+              <form method="post">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit" class="btn btn-primary">Submit Alert</button>
+              </form>
 
           </div>
         </div>

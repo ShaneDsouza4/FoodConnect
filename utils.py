@@ -11,3 +11,12 @@ def send_email_to_us(subject, message, recipient_list):
 		reply_to=recipient_list
 	)
 	mail.send()
+
+def send_email(subject, message, recipient_list):
+    mail = EmailMessage(
+        subject=subject,
+        body=message,
+        from_email=settings.EMAIL_HOST_USER,
+        to=recipient_list
+    )
+    mail.send()
