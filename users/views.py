@@ -322,6 +322,7 @@ def donate_view(request):
     return render(request, 'users/donate.html')
 
 
+#Contact Us
 def contact_view(request):
     if request.method == 'POST':
         name=request.POST['name']
