@@ -1,75 +1,70 @@
 {% extends 'webpages/base.html' %}
-
 {% load static %}
 {% block content %}
 
-    <!-- Hero Start -->
-    <div class="hero-wrap hero-bread" style="background-image: url('{% static "images/bg_1.jpg" %}');">
-        <div class="container">
-            <div class="row no-gutters slider-text align-items-center justify-content-center">
-                <div class="col-md-9 ftco-animate text-center">
-                    <h1 class="mb-0 bread">ALERTS</h1>
-                </div>
+<!-- Hero Start -->
+<div class="hero-wrap hero-bread" style="background-image: url('{% static "images/bg_1.jpg" %}');">
+    <div class="container">
+        <div class="row no-gutters slider-text align-items-center justify-content-center">
+            <div class="col-md-9 ftco-animate text-center">
+                <h1 class="mb-0 bread">ALERTS</h1>
             </div>
         </div>
     </div>
-    <!-- Hero End -->
+</div>
+<!-- Hero End -->
 
-    <section class="ftco-section testimony-section">
-        <div class="container">
-            <div class="row mb-5 pb-3">
-                <div class="col-md-12">
-                    <h2 class="mb-4 text-center">Alert List</h2>
-                    
-                    <table class="table table-bordered table-striped">
-                        <thead>
-                            <tr>
-                                <th>Food Bank Name</th>
-                                <th>Item</th>
-                                <th>Quantity Needed</th>
-                                <th>Description</th>
-                                <th>Status</th> <!-- New Status Column -->
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for alert in alerts %}
-                            <tr>
-                                <td>{{ alert.created_by.username }}</td> <!-- Food Bank name -->
-                                <td>{{ alert.item_name }}</td>
-                                <td>{{ alert.quantity_needed }}</td>
-                                <td>{{ alert.description }}</td>
-                                <td>
-                                    {% if alert.responsestodonation_set.exists %}
-                                        {% with response=alert.responsestodonation_set.first %}
-                                            <span class="badge {% if response.status == 'pending' %}badge-warning{% elif response.status == 'in_progress' %}badge-primary{% elif response.status == 'completed' %}badge-success{% endif %}">
-                                                {{ response.status|capfirst }}
-                                            </span>
-                                        {% endwith %}
-                                    {% else %}
-                                        <span class="badge badge-secondary">No Response</span>
-                                    {% endif %}
-                                </td>
-                                <td>
-                                    {% if alert.responsestodonation_set.exists %}
-                                        {% with response=alert.responsestodonation_set.first %}
-                                            <a href="{% url 'response_status' response.id %}" class="btn btn-info btn-sm">View Status</a>
-                                        {% endwith %}
-                                    {% else %}
-                                        <a href="{% url 'donate' alert.id %}" class="btn btn-primary">Donate</a>
-                                    {% endif %}
-                                </td>
-                            </tr>
-                            {% empty %}
-                            <tr>
-                                <td colspan="6" class="text-center">No alerts available.</td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
+<section class="ftco-section testimony-section">
+    <div class="container">
+        <div class="row mb-5 pb-3">
+            <div class="col-md-12">
+                <h2 class="mb-4 text-center">Alert List</h2>
+                
+                <table class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th>Food Bank Name</th>
+                            <th>Item</th>
+                            <th>Quantity Needed</th>
+                            <th>Description</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for alert in alerts %}
+                        <tr>
+                            <td>{{ alert.created_by.username }}</td>
+                            <td>{{ alert.item_name }}</td>
+                            <td>{{ alert.remaining_quantity_needed }}</td>
+                            <td>{{ alert.description }}</td>
+                            <td>
+                                <span class="badge 
+                                    {% if alert.response_status == 'pending' %} badge-warning
+                                    {% elif alert.response_status == 'in_progress' %} badge-primary
+                                    {% elif alert.response_status == 'completed' %} badge-success
+                                    {% endif %}">
+                                    {{ alert.response_status|capfirst }}
+                                </span>
+                            </td>
+                            <td>
+                                {% if alert.response_status == 'completed' %}
+                                    <a href="{% url 'response_status' alert.id %}" class="btn btn-info btn-sm">View Status</a>
+                                {% else %}
+                                    <a href="{% url 'donate' alert.id %}" class="btn btn-primary">Donate</a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="6" class="text-center">No alerts available.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
             </div>
         </div>
-    </section>
+    </div>
+</section>
 
 {% endblock %}

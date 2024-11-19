@@ -35,6 +35,8 @@ class Profile(models.Model):
     donation_frequency = models.IntegerField(default=0)
     donation_variety_count = models.IntegerField(default=0)  # Number of different types of items donated
     donation_volume = models.FloatField(default=0.0)  # Total volume of items donated
+    average_rating = models.FloatField(blank=True, null=True)
+    response_to_emergency_count = models.IntegerField(default=0)
 
     def __str__(self):
         return f"{self.user.username}'s profile"

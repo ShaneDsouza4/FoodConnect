@@ -1,42 +1,42 @@
-# Python
+# Python bytecode files
 *.py[cod]
-*.so
-
-# Django specific
-db.sqlite3
-*.log
-
-# Environments
-.env
-*.env
+__pycache__/
 
 # Byte-compiled / optimized / DLL files
 *.pyo
 *.pyd
-*.db
-*.sqlite3
-
-# C extensions
 *.so
 
-# Distribution / packaging
-.Python
+# Virtual environment directories
+.env
 env/
 venv/
 ENV/
 env.bak/
 venv.bak/
+.Python
 
-# Installers
+# Django specific files
+*.log
+
+# Environment files
+.env
+*.env
+
+# Database files (except for db.sqlite3, which is version-controlled)
+*.db
+!db.sqlite3
+
+# Distribution / packaging
 *.egg
 *.egg-info/
 dist/
 build/
 .eggs/
 
-# PyInstaller
-#  Usually these files are written by a python script from a template
-#  before PyInstaller builds the exe, so as to inject date/other infos into it.
+# PyInstaller files
+# Usually these files are written by a Python script from a template
+# before PyInstaller builds the executable.
 *.manifest
 *.spec
 
@@ -49,30 +49,39 @@ coverage.xml
 *.cover
 .hypothesis/
 
+# Django migration files
+migrations/
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints
+
 # Translations
 *.mo
 *.pot
 
-# Django stuff:
-*.log
+# Local Django settings (if any)
 local_settings.py
-db.sqlite3
 
-# Jupyter Notebook
-.ipynb_checkpoints
-
+# IDE / Editor specific files
 # PyCharm
 .idea/
-
 # VS Code
 .vscode/
+# Sublime Text
+*.sublime-workspace
+*.sublime-project
 
-# macOS
+# macOS specific files
 .DS_Store
 
-# Thumbnails
-_thumb.
+# Windows specific files
+Thumbs.db
+desktop.ini
 
-# Other
+# Backup files
 *.bak
 *.swp
+*~
+
+# Thumbnails
+*_thumb.*
