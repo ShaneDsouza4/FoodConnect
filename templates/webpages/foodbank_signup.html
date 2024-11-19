@@ -4,12 +4,14 @@
 {% block content %}
 
     <!-- Hero Start -->
-    <div class="hero-wrap hero-bread" style="background-image: url('{% static "images/bg_1.jpg" %}');">
+    <div class="hero-wrap hero-bread" style="background-color:#82AE46">
       <div class="container">
         <div class="row no-gutters slider-text align-items-center justify-content-center">
           <div class="col-md-9 ftco-animate text-center">
-          	<p class="breadcrumbs"><span class="mr-2"><a href="{% url 'landing' %}">Home</a></span> <span>About us</span></p>
-            <h1 class="mb-0 bread">Food Bank Signup</h1>
+          	<p class="breadcrumbs">
+                <span>Together, We Can Reduce Food Waste and Help Communities in Need.</span>
+            </p>
+            <p class="mb-0 bread">Join FoodConnect Today</p>
           </div>
         </div>
       </div>
@@ -20,15 +22,14 @@
       <div class="container">
         <div class="row mb-5 pb-3">
           <div class="col-md-6 offset-md-3">
-            <h2 class="mb-4">Food Bank Signup</h2>
+            <h2 class="mb-4">Food Bank Sign Up</h2>
 
             <form method="POST" action="{% url 'foodbank_signup' %}" enctype="multipart/form-data">
               {% csrf_token %}
               {{ form.as_p }}
               <br>
-              <button type="Submit" class="btn btn-primary">Register</button>
+              <button type="Submit" class="btn btn-primary">Sign Up</button>
           </form>
-
 
           </div>
         </div>

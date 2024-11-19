@@ -40,6 +40,7 @@ def login_user(request):
     else:
         return render(request, 'webpages/login.html')
 
+# Logout user view
 def logout_user(request):
     logout(request)
     messages.success(request, 'You have been logged out.')
@@ -66,25 +67,36 @@ def register_user(request):
     else:
         return render(request, 'webpages/register.html', {"form": form})
 
+# Restaurant Signup View
 def signup_restaurant(request):
     if request.method == 'POST':
+        # Take all inputs from webpage, and put in signup form
         form = CreateRestaurantForm(request.POST, request.FILES)
-        if form.is_valid():
 
+        # If user has filled the form
+        if form.is_valid():
             username = form.cleaned_data['username']
             password = form.cleaned_data['password']
             email = form.cleaned_data['email']
 
+            # Check if username exists in the DB
             if User.objects.filter(username=username).exists():
                 messages.error(request, 'Username already exists. Please choose a different one.')
-                return redirect('restaurant_signup')
+                return render(request, 'webpages/restaurant_signup.html', {'form': form})
 
+            # Check if email exists in the DB
+            if User.objects.filter(email=email).exists():
+                messages.error(request, 'Email already exists. Please choose a different one.')
+                return render(request, 'webpages/restaurant_signup.html', {'form': form})
+
+            # Create new Restaruant User
             user = User.objects.create_user(
                 username=username,
                 email=email,
                 password=password
             )
 
+            # Restaurant Model for the restaurant user with additional fields
             restaurant = Restaurant.objects.create(
                 user=user,
                 restaurant_name=form.cleaned_data['restaurant_name'],
@@ -100,6 +112,7 @@ def signup_restaurant(request):
             )
             restaurant.save()
 
+            # Authenticate and Login
             user = authenticate(username=username, password=password)
             if user is not None:
                 login(request, user)
@@ -110,23 +123,35 @@ def signup_restaurant(request):
             messages.success(request, 'Error: There was a problem registering, please try again.')
             return redirect('restaurant_signup')
     else:
-        restaurantform = CreateRestaurantForm()
-        return render(request, 'webpages/retaurant_signup.html', {'form': restaurantform})
+        restaurantform = CreateRestaurantForm() #Empty Form
+        return render(request, 'webpages/restaurant_signup.html', {'form': restaurantform})
 
+# Food Bank Signup View
 def signup_foodbank(request):
     if request.method == 'POST':
+        # Take all inputs from webpage, and put in signup form
         form = CreateFoodBankForm(request.POST, request.FILES)
+
+        # If user has filled the form
         if form.is_valid():
             username = form.cleaned_data['username']
             password = form.cleaned_data['password']
             email = form.cleaned_data['email']
 
+            # Check if username exists in the DB
             if User.objects.filter(username=username).exists():
                 messages.error(request, 'Username already exists. Please choose a different one.')
-                return redirect('foodbank_signup')
+                return render(request, 'webpages/foodbank_signup.html', {'form': form})
 
+            # Check if email exists in the DB
+            if User.objects.filter(email=email).exists():
+                messages.error(request, 'Email already exists. Please choose a different one.')
+                return render(request, 'webpages/foodbank_signup.html', {'form': form})
+
+            # Create new Food Bank User
             user = User.objects.create_user(username=username, email=email, password=password)
 
+            # Food Bank Model for the foodbank user with additional fields
             foodbank = FoodBank.objects.create(
                 user=user,
                 foodbank_name=form.cleaned_data['foodbank_name'],
@@ -142,6 +167,7 @@ def signup_foodbank(request):
             )
             foodbank.save()
 
+            #Authenticate and login the restaurant user
             user = authenticate(username=username, password=password)
             if user is not None:
                 login(request, user)
@@ -152,23 +178,35 @@ def signup_foodbank(request):
             messages.error(request, 'Error: There was a problem registering, please try again.')
             return redirect('foodbank_signup')
 
-    foodbankform = CreateFoodBankForm()
+    foodbankform = CreateFoodBankForm() #Empty Form
     return render(request, 'webpages/foodbank_signup.html', {'form': foodbankform})
 
+# Individual Signup Form View
 def signup_individual(request):
     if request.method == 'POST':
+        # Take all inputs from webpage, and put in signup form
         form = CreateIndividualForm(request.POST, request.FILES)
+
+        # If user has filled the form
         if form.is_valid():
             username = form.cleaned_data['username']
             password = form.cleaned_data['password']
             email = form.cleaned_data['email']
 
+            # Check if username exists in the DB
             if User.objects.filter(username=username).exists():
                 messages.error(request, 'Username already exists. Please choose a different one.')
-                return redirect('individual_signup')
+                return render(request, 'webpages/individual_signup.html', {'form': form})
 
+            # Check if email exists in the DB
+            if User.objects.filter(email=email).exists():
+                messages.error(request, 'Email already exists. Please choose a different one.')
+                return render(request, 'webpages/individual_signup.html', {'form': form})
+
+            # Create new User
             user = User.objects.create_user(username=username, email=email, password=password)
 
+            # Profile for the user with additional fields
             profile = Profile.objects.create(
                 user=user,
                 first_name=form.cleaned_data['first_name'],
@@ -178,10 +216,12 @@ def signup_individual(request):
                 city=form.cleaned_data['city'],
                 state=form.cleaned_data['state'],
                 country=form.cleaned_data['country'],
+                postal_code=form.cleaned_data['postal_code'],
                 id_verification=form.cleaned_data['id_verification']
             )
             profile.save()
 
+            # Authenticate new user and log them in
             user = authenticate(username=username, password=password)
             if user is not None:
                 login(request, user)
@@ -192,7 +232,7 @@ def signup_individual(request):
             messages.error(request, 'There was a problem with your registration. Please try again.')
             return redirect('individual_signup')
 
-    form = CreateIndividualForm()
+    form = CreateIndividualForm() #Empty Form
     return render(request, 'webpages/individual_signup.html', {'form': form})
 
 def signup_view(request):

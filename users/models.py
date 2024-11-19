@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 
 CANADA_PROVINCES_AND_TERRITORIES = [
+    ('', 'Select State'),
     ('AB', 'Alberta'),
     ('BC', 'British Columbia'),
     ('MB', 'Manitoba'),
@@ -27,14 +28,15 @@ class Profile(models.Model):
     city = models.CharField(max_length=100, blank=True, null=True)
     state = models.CharField(max_length=100, choices=CANADA_PROVINCES_AND_TERRITORIES, blank=True, null=True)
     country = models.CharField(max_length=100, blank=True, null=True)
+    postal_code = models.CharField(max_length=20, blank=True, null=True)
     id_verification = models.ImageField(upload_to='id_cards/', blank=True, null=True)
     is_verified = models.BooleanField(default=False)
 
     # Metrics for analyticcs
     total_donations = models.IntegerField(default=0)
     donation_frequency = models.IntegerField(default=0)
-    donation_variety_count = models.IntegerField(default=0)  # Number of different types of items donated
-    donation_volume = models.FloatField(default=0.0)  # Total volume of items donated
+    donation_variety_count = models.IntegerField(default=0)
+    donation_volume = models.FloatField(default=0.0)
     average_rating = models.FloatField(blank=True, null=True)
     response_to_emergency_count = models.IntegerField(default=0)
 
