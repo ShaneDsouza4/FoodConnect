@@ -11,12 +11,12 @@ import json
 def load_and_prepare_data():
     queryset = Profile.objects.all().values(
         'first_name', 'last_name', 'total_donations', 'donation_frequency', 
-        'donation_volume', 'donation_variety_count'
+        'donation_volume', 'donation_variety_count', 'average_rating', 'response_to_emergency_count'
     )
     data = pd.DataFrame(list(queryset))
     data.fillna(0, inplace=True)
     data['name'] = data['first_name'].astype(str) + ' ' + data['last_name'].astype(str)
-    return data[['name', 'total_donations', 'donation_frequency', 'donation_volume', 'donation_variety_count']].copy()
+    return data[['name', 'total_donations', 'donation_frequency', 'donation_volume', 'donation_variety_count',  'average_rating', 'response_to_emergency_count']].copy()
 
 def rank_donators(data):
     scaler = MinMaxScaler()
@@ -24,17 +24,24 @@ def rank_donators(data):
     data['normalized_frequency'] = scaler.fit_transform(data[['donation_frequency']])
     data['normalized_variety'] = scaler.fit_transform(data[['donation_variety_count']])
     data['normalized_volume'] = scaler.fit_transform(data[['donation_volume']])
+    data['normalized_rating'] = scaler.fit_transform(data[['average_rating']])
+    data['normalized_emergency_response'] = scaler.fit_transform(data[['response_to_emergency_count']])
 
     weight_donations = 0.4
-    weight_frequency = 0.3
-    weight_variety = 0.15
-    weight_volume = 0.15
+    weight_frequency = 0.15
+    weight_variety = 0.05
+    weight_volume = 0.1
+    weight_rating = 0.1
+    weight_emergency_response = 0.2
+
 
     data['score'] = (
         data['normalized_donations'] * weight_donations +
         data['normalized_frequency'] * weight_frequency +
         data['normalized_variety'] * weight_variety +
-        data['normalized_volume'] * weight_volume
+        data['normalized_volume'] * weight_volume +
+        data['normalized_rating'] * weight_rating +
+        data['normalized_emergency_response'] * weight_emergency_response
     )
 
     ranked_data = data.sort_values(by='score', ascending=False).head(10)
@@ -59,7 +66,7 @@ def get_donor_location_distribution():
     }
 
 def get_response_to_emergency_data():
-    response_individual = Profile.objects.aggregate(sum=Sum('donation_frequency'))['sum'] or 0
+    response_individual = Profile.objects.aggregate(sum=Sum('response_to_emergency_count'))['sum'] or 0
     response_restaurant = Restaurant.objects.aggregate(sum=Sum('response_to_emergency_count'))['sum'] or 0
 
     return {
@@ -82,12 +89,21 @@ def predict_future_alerts():
     if daily_alerts.empty:
         return { (pd.Timestamp.now() + timedelta(days=i)).strftime('%Y-%m-%d'): 0.0 for i in range(1, 8) }
 
+    # Rolling average calculation
     window_size = min(7, len(daily_alerts))
-    data['7_day_avg'] = daily_alerts.rolling(window=window_size).mean()
-    recent_avg = data['7_day_avg'].iloc[-window_size:].mean() if not data['7_day_avg'].iloc[-window_size:].isna().all() else 0
-    last_date = data.index[-1]
+    daily_alerts_rolling_avg = daily_alerts.rolling(window=window_size).mean()
+
+    recent_avg = daily_alerts_rolling_avg[-window_size:].mean() if not daily_alerts_rolling_avg.isna().all() else 0
+
+    # Generate future predictions
+    last_date = daily_alerts.index[-1]
     future_dates = [last_date + timedelta(days=i) for i in range(1, 8)]
     future_predictions = {date.strftime('%Y-%m-%d'): recent_avg for date in future_dates}
+
+    print("Daily Alerts Data:", daily_alerts)
+    print("Rolling Avg Data:", daily_alerts_rolling_avg)
+    print("Recent Avg:", recent_avg)
+
 
     return future_predictions
 
@@ -99,14 +115,10 @@ def analytics_view(request):
     progress_to_yearly_target = round((funds_raised / 1750) * 100, 2)
     donation_data = get_donation_data_by_type()
     pie_chart_data = json.dumps(donation_data) 
-
-    # Fetch additional data for charts
     location_data = get_donor_location_distribution()
     response_emergency_data = get_response_to_emergency_data()
-    future_alerts = predict_future_alerts()
-
-    # Serialize JSON data for JavaScript charts
     response_emergency_json = json.dumps(response_emergency_data)
+    future_alerts = predict_future_alerts()    
 
     context = {
         'funds_raised': funds_raised,

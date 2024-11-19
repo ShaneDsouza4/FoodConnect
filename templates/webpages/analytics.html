@@ -101,13 +101,8 @@
                             
                                         <script type="text/javascript">
                                             document.addEventListener('DOMContentLoaded', function() {
-                                                // Parse the JSON data directly from Django context, marked as safe
                                                 var pieChartData = {{ pie_chart_data|safe }};
-                                                
-                                                // Log data for debugging purposes
-                                                console.log("Parsed pie chart data:", pieChartData);
                             
-                                                // Check if pieChartData contains data
                                                 if (Object.keys(pieChartData).length > 0) {
                                                     var ctx = document.getElementById('donationByDonorTypePieChart').getContext('2d');
                                                     var donationPieChart = new Chart(ctx, {
@@ -116,7 +111,7 @@
                                                             labels: Object.keys(pieChartData),
                                                             datasets: [{
                                                                 data: Object.values(pieChartData),
-                                                                backgroundColor: ['#ff6384', '#36a2eb'],  // Customize colors as needed
+                                                                backgroundColor: ['#ff6384', '#36a2eb'],
                                                             }]
                                                         },
                                                         options: {
@@ -153,15 +148,15 @@
                             <script>
                                 document.addEventListener('DOMContentLoaded', function() {
                                     var ctx = document.getElementById('responseToEmergencyDonutChart').getContext('2d');
-                                    
-                                    // Check if the canvas context is available
+                                    var responseEmergencyData = JSON.parse('{{ response_emergency_data|safe }}');
+
                                     if (ctx) {
                                         var responseDonutChart = new Chart(ctx, {
-                                            type: 'doughnut',  // Specify doughnut type for donut chart
+                                            type: 'doughnut',
                                             data: {
                                                 labels: ['Individual', 'Restaurant'],
                                                 datasets: [{
-                                                    data: [24, 16],  // Replace with your actual data
+                                                    data: [responseEmergencyData.individual, responseEmergencyData.restaurant], // Use dynamic data
                                                     backgroundColor: ['#FF6384', '#36A2EB'],
                                                     hoverBackgroundColor: ['#FF6384', '#36A2EB']
                                                 }]
@@ -201,7 +196,7 @@
                                     var donorLocationDistributionChart = new Chart(ctx, {
                                         type: 'bar',
                                         data: {
-                                            labels: locationData.labels,  // Use actual city names
+                                            labels: locationData.labels,
                                             datasets: [{
                                                 label: 'Number of Donors',
                                                 data: locationData.values,
@@ -239,57 +234,71 @@
                                     </div>
                                 </div>
                                 <script>
-                                    document.addEventListener('DOMContentLoaded', function() {
-                                        var futureAlertsData = {{ future_alerts|safe }};
-                                        
-                                        var labels = Object.keys(futureAlertsData).map(date => new Date(date).toISOString().split('T')[0]);
-                                        var data = Object.values(futureAlertsData);
-                                        
-                                        var ctxFutureAlerts = document.getElementById('futureAlertsLineChart').getContext('2d');
-                                        var futureAlertsLineChart = new Chart(ctxFutureAlerts, {
-                                            type: 'line',
-                                            data: {
-                                                labels: labels,
-                                                datasets: [{
-                                                    label: 'Predicted Alerts',
-                                                    data: data,
-                                                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                                                    borderColor: 'rgba(54, 162, 235, 1)',
-                                                    borderWidth: 2,
-                                                    fill: true,
-                                                    tension: 0.4
-                                                }]
-                                            },
-                                            options: {
-                                                scales: {
-                                                    y: {
-                                                        beginAtZero: true,
-                                                        title: {
-                                                            display: true,
-                                                            text: 'Number of Alerts'
-                                                        }
-                                                    },
-                                                    x: {
-                                                        title: {
-                                                            display: true,
-                                                            text: 'Date'
-                                                        },
-                                                        ticks: {
-                                                            maxTicksLimit: 4,
-                                                        }
-                                                    }
-                                                },
-                                                plugins: {
-                                                    legend: {
+                                document.addEventListener('DOMContentLoaded', function () {
+                                    var canvas = document.getElementById('futureAlertsLineChart');
+                                    if (!canvas) {
+                                        console.error("Canvas element with ID 'futureAlertsLineChart' not found.");
+                                        return; // Exit if the element is missing
+                                    }
+
+                                    var futureAlertsData = {{ future_alerts|safe }};
+                                    
+                                    // Validate futureAlertsData
+                                    if (!futureAlertsData || Object.keys(futureAlertsData).length === 0) {
+                                        console.error("Future Alerts Data is empty or undefined:", futureAlertsData);
+                                        return; // Exit if no data is available
+                                    }
+
+                                    var labels = Object.keys(futureAlertsData);
+                                    var data = Object.values(futureAlertsData);
+
+                                    var ctx = canvas.getContext('2d');
+                                    new Chart(ctx, {
+                                        type: 'line',
+                                        data: {
+                                            labels: labels,
+                                            datasets: [{
+                                                label: 'Predicted Alerts',
+                                                data: data,
+                                                backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                                                borderColor: 'rgba(54, 162, 235, 1)',
+                                                borderWidth: 2,
+                                                fill: true,
+                                                tension: 0.4
+                                            }]
+                                        },
+                                        options: {
+                                            responsive: true,
+                                            maintainAspectRatio: false,
+                                            scales: {
+                                                x: {
+                                                    title: {
                                                         display: true,
-                                                        position: 'top'
+                                                        text: 'Date'
+                                                    },
+                                                    ticks: {
+                                                        maxTicksLimit: 4
                                                     }
                                                 },
-                                                responsive: true,
-                                                maintainAspectRatio: false
+                                                y: {
+                                                    beginAtZero: true,
+                                                    title: {
+                                                        display: true,
+                                                        text: 'Number of Alerts'
+                                                    }
+                                                }
+                                            },
+                                            plugins: {
+                                                legend: {
+                                                    display: true,
+                                                    position: 'top'
+                                                }
                                             }
-                                        });
+                                        }
                                     });
+                                });
+
+
                                 </script>                                         
                         </div>
 
@@ -305,7 +314,6 @@
                                             <th>Rank No.</th>
                                             <th>Name</th>
                                             <th>Total Donations</th>
-                                            <!-- <th>Score</th> -->
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -314,7 +322,6 @@
                                             <td>{{ forloop.counter }}</td>
                                             <td>{{ donator.name }}</td>
                                             <td>{{ donator.total_donations }}</td>
-                                            <!-- <td>{{ donator.score | floatformat:2 }}</td> -->
                                         </tr>
                                         {% endfor %}
                                     </tbody>
