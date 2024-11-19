@@ -21,4 +21,6 @@ urlpatterns = [
     path('emergency_alert/', emergency_alert_view, name='emergency_alert'),
     path('donate/', donate_view, name='donate'),
     path('contact/', views.contact_view, name='contact_us'),
+
+    path('profile/', views.user_profile, name='user_profile'),
 ]

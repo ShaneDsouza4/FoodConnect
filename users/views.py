@@ -16,11 +16,12 @@ from django.db.models import Q
 from django.contrib.auth.decorators import login_required
 
 from utils import send_email_to_us
+from datetime import datetime
 
 
+# Landing page view
 def landing_view(request):
     return render(request, 'webpages/index.html')
-    #return render(request, 'users/landing.html')
 
 def about_view(request):
     return render(request, 'webpages/about.html')
@@ -29,14 +30,19 @@ def login_user(request):
     if request.method == 'POST':
         username = request.POST['username']
         password = request.POST['password']
+
         user = authenticate(request, username=username, password=password)
+
         if user is not None:
             login(request, user)
             messages.success(request, 'You are now logged in')
             return redirect('landing')
         else:
-            messages.success(request, 'There was an Error, please try again.')
-            return redirect('login')
+            if not User.objects.filter(username=username).exists():
+                 messages.success(request, f"No user found with username: {username}")
+            else:
+                messages.success(request, f"Incorrect Password for username: {username}")
+        return redirect('login')
     else:
         return render(request, 'webpages/login.html')
 
@@ -341,3 +347,17 @@ def contact_view(request):
             messages.error(request, 'Message was not sent.')
             return redirect('contact_us')
     return render(request, 'webpages/contact.html')
+
+#User Profile
+def user_profile(request):
+    if 'profile_view_count' not in request.session:
+        request.session['profile_view_count'] = 0
+    request.session['profile_view_count'] += 1
+
+    last_login = request.COOKIES.get('last_login')
+    response = render(request, 'webpages/user_profile.html', {
+        'last_login': last_login,
+        'view_count': request.session['profile_view_count']
+    })
+    response.set_cookie('last_login', datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+    return response

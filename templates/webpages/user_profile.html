@@ -1,0 +1,47 @@
+
+{% extends 'webpages/base.html' %}
+
+{% load static %}
+{% block content %}
+
+    <!-- Hero Start -->
+    <div class="hero-wrap hero-bread" style="background-color:#82AE46">
+      <div class="container">
+        <div class="row no-gutters slider-text align-items-center justify-content-center">
+          <div class="col-md-9 ftco-animate text-center">
+          	<p class="breadcrumbs">
+                <span class="mr-2">
+                    <a href="{% url 'landing' %}">View Your Orders</a>
+                </span>
+                <span class="mr-2">
+                    <a href="{% url 'landing' %}">Edit Profile</a>
+                </span>
+            </p>
+            <h1 class="mb-0 bread">Profile</h1>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Hero End -->
+
+    <section class="ftco-section testimony-section">
+      <div class="container">
+        <div class="row mb-5 pb-3">
+          <div class="col-md-6 offset-md-3">
+
+              {% if user.first_name %}
+                    <h2 class="mb-4">Greetings, {{ user.first_name }} {{ user.last_name }}! <strong></strong></h2>
+              {% else %}
+                    <h2 class="mb-4">Greetings, {{ user.username }}! <strong></strong></h2>
+              {% endif %}
+
+                <p>Email: {{ user.email }}</p>
+                <p>You last logged in on: <b>{{ last_login }}</b></p>
+              <p>You have also visited this page <b>{{ view_count }}</b> times during this session.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+{% endblock %}
