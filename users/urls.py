@@ -23,4 +23,5 @@ urlpatterns = [
     path('contact/', views.contact_view, name='contact_us'),
 
     path('profile/', views.user_profile, name='user_profile'),
+    path('edit-profile/', views.edit_profile, name='edit_profile'),
 ]
