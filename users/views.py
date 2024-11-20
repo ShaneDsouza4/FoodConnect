@@ -5,7 +5,8 @@ from django.contrib import messages
 
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
-from .forms import SignUpForm, CreateRestaurantForm, CreateFoodBankForm, CreateIndividualForm
+from .forms import SignUpForm, CreateRestaurantForm, CreateFoodBankForm, CreateIndividualForm, EditRestaurantForm, \
+    EditFoodBankForm, EditIndividualForm
 from django import forms
 
 
@@ -361,3 +362,109 @@ def user_profile(request):
     })
     response.set_cookie('last_login', datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
     return response
+
+def edit_profile(request):
+    user = request.user #User instance
+
+    if hasattr(user, 'restaurant_profile'): #if user linked to Restaurant
+        restaurant = user.restaurant_profile
+        if request.method == 'POST':
+            form = EditRestaurantForm(request.POST)
+
+            if form.is_valid():
+                user.email = form.cleaned_data['email']
+                user.save()
+
+                restaurant.restaurant_name = form.cleaned_data['restaurant_name']
+                restaurant.restaurant_phone = form.cleaned_data['restaurant_phone']
+                restaurant.street = form.cleaned_data['street']
+                restaurant.city = form.cleaned_data['city']
+                restaurant.state = form.cleaned_data['state']
+                restaurant.country = form.cleaned_data['country']
+                restaurant.postal_code = form.cleaned_data['postal_code']
+                restaurant.website = form.cleaned_data['website']
+                restaurant.save()
+
+                messages.success(request, 'Profile updated successfully.')
+                return redirect('edit_profile')
+        else:
+            form = EditRestaurantForm(initial={
+                'email': user.email,
+                'restaurant_name': restaurant.restaurant_name,
+                'restaurant_phone': restaurant.restaurant_phone,
+                'street': restaurant.street,
+                'city': restaurant.city,
+                'state': restaurant.state,
+                'country': restaurant.country,
+                'postal_code': restaurant.postal_code,
+                'website': restaurant.website,
+            })
+    elif hasattr(user, 'foodbank'): #if user linked to Food Bank
+        foodbank = user.foodbank
+        if request.method == 'POST':
+            form = EditFoodBankForm(request.POST)
+
+            if form.is_valid():
+                user.email = form.cleaned_data['email']
+                user.save()
+
+                foodbank.foodbank_name = form.cleaned_data['foodbank_name']
+                foodbank.foodbank_phone = form.cleaned_data['foodbank_phone']
+                foodbank.street = form.cleaned_data['street']
+                foodbank.city = form.cleaned_data['city']
+                foodbank.state = form.cleaned_data['state']
+                foodbank.country = form.cleaned_data['country']
+                foodbank.postal_code = form.cleaned_data['postal_code']
+                foodbank.website = form.cleaned_data['website']
+                foodbank.save()
+
+                messages.success(request, 'Profile updated successfully.')
+                return redirect('edit_profile')
+        else:
+            form = EditFoodBankForm(initial={
+                'email': user.email,
+                'foodbank_name': foodbank.foodbank_name,
+                'foodbank_phone': foodbank.foodbank_phone,
+                'street': foodbank.street,
+                'city': foodbank.city,
+                'state': foodbank.state,
+                'country': foodbank.country,
+                'postal_code': foodbank.postal_code,
+                'website': foodbank.website,
+            })
+    elif hasattr(user, 'profile'):  # if profile linked to Food Bank
+        profile = user.profile
+        if request.method == 'POST':
+            form = EditIndividualForm(request.POST)
+            if form.is_valid():
+                user.email = form.cleaned_data['email']
+                user.save()
+
+                profile.first_name = form.cleaned_data['first_name']
+                profile.last_name = form.cleaned_data['last_name']
+                profile.phone_number = form.cleaned_data['phone_number']
+                profile.street_address = form.cleaned_data['street_address']
+                profile.city = form.cleaned_data['city']
+                profile.state = form.cleaned_data['state']
+                profile.country = form.cleaned_data['country']
+                profile.postal_code = form.cleaned_data['postal_code']
+                profile.save()
+
+                messages.success(request, 'Profile updated successfully.')
+                return redirect('edit_profile')
+        else:
+            form = EditIndividualForm(initial={
+                'email': user.email,
+                'first_name': profile.first_name,
+                'last_name': profile.last_name,
+                'phone_number': profile.phone_number,
+                'street_address': profile.street_address,
+                'city': profile.city,
+                'state': profile.state,
+                'country': profile.country,
+                'postal_code': profile.postal_code,
+            })
+    else:
+        messages.error(request, 'Unable to identify your profile type.')
+        return redirect('landing')
+    return render(request, 'webpages/edit_profile.html', {"form": form})

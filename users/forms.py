@@ -227,3 +227,143 @@ class CreateIndividualForm(forms.Form):
         required=True,
         widget=forms.ClearableFileInput(attrs={'class': 'form-control'})
     )
+
+#Edit Restaurant Form
+class EditRestaurantForm(forms.Form):
+    restaurant_name = forms.CharField(
+        label="Restaurant Name",
+        max_length=255,
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Restaurant Name'})
+    )
+    restaurant_phone = forms.CharField(
+        label="Phone Number",
+        max_length=20,
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Phone Number'})
+    )
+    email = forms.EmailField(
+        label="Email Address",
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Email Address'})
+    )
+    street = forms.CharField(
+        label="Street Address",
+        max_length=255,
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Street'})
+    )
+    city = forms.CharField(
+        label="City",
+        max_length=100,
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'City'})
+    )
+    state = forms.ChoiceField(
+        label="State",
+        choices=CANADA_PROVINCES_AND_TERRITORIES,
+        widget=forms.Select(attrs={'class': 'form-control'})
+    )
+    country = forms.CharField(
+        label="Country",
+        max_length=100,
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Country'})
+    )
+    postal_code = forms.CharField(
+        label="Postal Code",
+        max_length=20,
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Postal Code'})
+    )
+    website = forms.URLField(
+        label="Website (optional)",
+        required=False,
+        widget=forms.URLInput(attrs={'class': 'form-control', 'placeholder': 'Website (optional)'})
+    )
+
+#Edit Food Bank Form
+class EditFoodBankForm(forms.Form):
+    foodbank_name = forms.CharField(
+        label="Food Bank Name",
+        max_length=255,
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Food Bank Name'})
+    )
+    foodbank_phone = forms.CharField(
+        label="Phone Number",
+        max_length=20,
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Phone Number'})
+    )
+    email = forms.EmailField(
+        label="Email Address",
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Email Address'})
+    )
+    street = forms.CharField(
+        label="Street Address",
+        max_length=255,
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Street'})
+    )
+    city = forms.CharField(
+        label="City",
+        max_length=100,
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'City'})
+    )
+    state = forms.ChoiceField(
+        label="State",
+        choices=CANADA_PROVINCES_AND_TERRITORIES,
+        widget=forms.Select(attrs={'class': 'form-control'})
+    )
+    country = forms.CharField(
+        label="Country",
+        max_length=100,
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Country'})
+    )
+    postal_code = forms.CharField(
+        label="Postal Code",
+        max_length=20,
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Postal Code'})
+    )
+    website = forms.URLField(
+        label="Website (optional)",
+        required=False,
+        widget=forms.URLInput(attrs={'class': 'form-control', 'placeholder': 'Website (optional)'})
+    )
+
+#Edit Individual Form
+class EditIndividualForm(forms.Form):
+    first_name = forms.CharField(
+        label="First Name",
+        max_length=30,
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'First Name'})
+    )
+    last_name = forms.CharField(
+        label="Last Name",
+        max_length=30,
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Last Name'})
+    )
+    email = forms.EmailField(
+        label="Email Address",
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Email Address'})
+    )
+    phone_number = forms.CharField(
+        label="Phone Number",
+        max_length=20,
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Phone Number'})
+    )
+    street_address = forms.CharField(
+        label="Street Address",
+        max_length=255, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Street'})
+    )
+    city = forms.CharField(
+        label="City",
+        max_length=100,
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'City'})
+    )
+    state = forms.ChoiceField(
+        label="State",
+        choices=CANADA_PROVINCES_AND_TERRITORIES,
+        widget=forms.Select(attrs={'class': 'form-control'})
+    )
+    country = forms.CharField(
+        label="Country",
+        max_length=100,
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Country'})
+    )
+    postal_code = forms.CharField(
+        label="Postal Code",
+        max_length=100,
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Postal Code'})
+    )
