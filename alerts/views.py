@@ -126,6 +126,16 @@ def ResponseToDonationView(request, alert_id):
             )
             response.save()
 
+            #Update donation count in DB
+            if hasattr(request.user, 'profile'):
+                profile = request.user.profile
+                profile.response_to_emergency_count += 1
+                profile.save()
+            elif hasattr(request.user, 'restaurant_profile'):
+                restaurant = request.user.restaurant_profile
+                restaurant.response_to_emergency_count += 1
+                restaurant.save()
+
             foodbank_email = alert.created_by.email
             donor_email = request.user.email
             subject = f"New Donation Response for Alert: {alert.item_name}"
