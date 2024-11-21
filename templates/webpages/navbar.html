@@ -13,9 +13,9 @@
                 <li class="nav-item"><a class="nav-link" href="{% url 'donations' %}">Donations</a></li>
                 <li class="nav-item"><a class="nav-link" href="{% url 'analytics' %}">Analytics</a></li>
                 <li class="nav-item"><a class="nav-link" href="{% url 'alert_list' %}">Alerts</a></li>
-                <li class="nav-item"><a class="nav-link" href="{% url 'user_profile' %}">Profile</a></li>
 
                 {% if user.is_authenticated %}
+                    <li class="nav-item"><a class="nav-link" href="{% url 'user_profile' %}">Profile</a></li>
                     <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}">Logout</a></li>
                 {% else %}
                     <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">Login</a></li>
@@ -38,6 +38,10 @@
                 <li class="nav-item">
                     {% if request.user.is_authenticated and request.user.foodbank %}
                         <a href="{% url 'alerts' %}" class="nav-link btn btn-danger text-white m-2">Add Alert +</a>
+                     {% endif %}
+
+                    {% if request.user.is_authenticated and not request.user.foodbank %}
+                        <a href="{% url 'create-donation' %}" class="nav-link btn btn-danger text-white m-2">Add Donation</a>
                      {% endif %}
                 </li>
             </ul>
