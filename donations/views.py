@@ -43,6 +43,35 @@ def create_donation(request):
             )
             product.save()
 
+            products_by_user = Product.objects.filter(donated_by=request.user)
+
+            # Metrics for analytics
+            def update_metrics(entity):
+                # Total donations
+                entity.total_donations += 1
+
+                # Donation frequency
+                one_month_ago = now() - timedelta(days=28)
+                recent_donations = products_by_user.filter(date_created__gte=one_month_ago).count()
+                entity.donation_frequency = recent_donations
+
+                # Donation variety count
+                unique_categories = products_by_user.values('category').distinct().count()
+                entity.donation_variety_count = unique_categories
+
+                # Donation volume
+                conversion_factors = {'g': 0.001,'kg': 1, 'ml': 0.001,'liters': 1}
+                normalized_weight = product.weight * conversion_factors.get(product.unit, 1)
+                current_product_volume = product.quantity * normalized_weight
+                entity.donation_volume += current_product_volume
+
+                entity.save()
+
+            if hasattr(request.user, 'profile'):
+                update_metrics(request.user.profile)
+            elif hasattr(request.user, 'restaurant_profile'):
+                update_metrics(request.user.restaurant_profile)
+
             messages.success(request, 'Donation added successfully!')
             return redirect('donations')
         else:
