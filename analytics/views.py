@@ -4,9 +4,52 @@ from django.shortcuts import render
 from users.models import Profile, Restaurant
 from alerts.models import Alert
 from sklearn.preprocessing import MinMaxScaler
+from sklearn.ensemble import GradientBoostingRegressor
+from sklearn.model_selection import train_test_split
 from django.db.models import Sum, Count
 from django.utils.timezone import now
 import json
+import pickle
+import os
+
+def train_and_save_model():
+    data = load_and_prepare_alldata()
+
+    # Features and target
+    features = ['total_donations', 'donation_frequency', 'donation_variety_count',
+                'donation_volume', 'average_rating', 'response_to_emergency_count']
+    target = 'score'
+
+    # Simulate scores if not present (one-time for training)
+    if target not in data:
+        weights = {
+            'total_donations': 0.4,
+            'donation_frequency': 0.15,
+            'donation_variety_count': 0.05,
+            'donation_volume': 0.1,
+            'average_rating': 0.1,
+            'response_to_emergency_count': 0.2
+        }
+        data[target] = sum(data[feature] * weight for feature, weight in weights.items())
+
+    # Normalize features
+    scaler = MinMaxScaler()
+    data[features] = scaler.fit_transform(data[features])
+
+    # Split data
+    X = data[features]
+    y = data[target]
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+    # Train model
+    model = GradientBoostingRegressor()
+    model.fit(X_train, y_train)
+
+    # Save the model and scaler
+    with open('rank_model.pkl', 'wb') as f:
+        pickle.dump(model, f)
+    with open('scaler.pkl', 'wb') as f:
+        pickle.dump(scaler, f)
 
 def load_and_prepare_alldata():
     # Profile dataset
@@ -54,33 +97,30 @@ def load_and_prepare_restaurant_data():
     return data[['name', 'total_donations', 'donation_frequency', 'donation_volume', 'donation_variety_count',  'average_rating', 'response_to_emergency_count']].copy()
 
 def rank_donators(data):
-    scaler = MinMaxScaler()
-    data['normalized_donations'] = scaler.fit_transform(data[['total_donations']])
-    data['normalized_frequency'] = scaler.fit_transform(data[['donation_frequency']])
-    data['normalized_variety'] = scaler.fit_transform(data[['donation_variety_count']])
-    data['normalized_volume'] = scaler.fit_transform(data[['donation_volume']])
-    data['normalized_rating'] = scaler.fit_transform(data[['average_rating']])
-    data['normalized_emergency_response'] = scaler.fit_transform(data[['response_to_emergency_count']])
+    features = ['total_donations', 'donation_frequency', 'donation_variety_count',
+                'donation_volume', 'average_rating', 'response_to_emergency_count']
 
-    weight_donations = 0.4
-    weight_frequency = 0.15
-    weight_variety = 0.05
-    weight_volume = 0.1
-    weight_rating = 0.1
-    weight_emergency_response = 0.2
+    # Ensure model and scaler are available; if not, train them
+    if not os.path.exists('rank_model.pkl') or not os.path.exists('scaler.pkl'):
+        print("Model or scaler not found. Training the model...")
+        train_and_save_model()
 
+    # Load pre-trained model and scaler
+    with open('rank_model.pkl', 'rb') as f:
+        model = pickle.load(f)
+    with open('scaler.pkl', 'rb') as f:
+        scaler = pickle.load(f)
 
-    data['score'] = (
-        data['normalized_donations'] * weight_donations +
-        data['normalized_frequency'] * weight_frequency +
-        data['normalized_variety'] * weight_variety +
-        data['normalized_volume'] * weight_volume +
-        data['normalized_rating'] * weight_rating +
-        data['normalized_emergency_response'] * weight_emergency_response
-    )
+    # Normalize features
+    data[features] = scaler.transform(data[features])
 
-    ranked_data = data.sort_values(by='score', ascending=False).head(10)
+    # Predict scores
+    data['predicted_score'] = model.predict(data[features])
+
+    # Rank donors
+    ranked_data = data.sort_values(by='predicted_score', ascending=False).head(10)
     return ranked_data
+
 
 def get_donation_data_by_type():
     individual_donations = Profile.objects.aggregate(total=Sum('total_donations'))['total'] or 0
@@ -152,7 +192,7 @@ def analytics_view(request):
     total_donors = Profile.objects.count() + Restaurant.objects.count()
     progress_to_yearly_target = round((funds_raised / 1750) * 100, 2)
     donation_data = get_donation_data_by_type()
-    pie_chart_data = json.dumps(donation_data) 
+    pie_chart_data = json.dumps(donation_data)
     location_data = get_donor_location_distribution()
     response_emergency_data = get_response_to_emergency_data()
     response_emergency_json = json.dumps(response_emergency_data)
@@ -162,9 +202,9 @@ def analytics_view(request):
         'funds_raised': funds_raised,
         'progress_to_yearly_target': progress_to_yearly_target,
         'total_donors': total_donors,
-        'ranked_donators': ranked_data[['name', 'total_donations', 'donation_volume', 'score']].to_dict(orient='records'),
-        'ranked_individual_donators': individual_ranked_data[['name', 'total_donations', 'donation_volume', 'score']].to_dict(orient='records'),
-        'ranked_restaurant_donators': restaurant_ranked_data[['name', 'total_donations', 'donation_volume', 'score']].to_dict(orient='records'),
+        'ranked_donators': ranked_data[['name', 'total_donations', 'donation_volume', 'predicted_score']].to_dict(orient='records'),
+        'ranked_individual_donators': individual_ranked_data[['name', 'total_donations', 'donation_volume', 'predicted_score']].to_dict(orient='records'),
+        'ranked_restaurant_donators': restaurant_ranked_data[['name', 'total_donations', 'donation_volume', 'predicted_score']].to_dict(orient='records'),
         'top_donor_name': ranked_data.iloc[0]['name'] if not ranked_data.empty else "No Donors",
         'top_individual_donor_name': individual_ranked_data.iloc[0]['name'] if not individual_ranked_data.empty else "No Donors",
         'top_restaurant_donor_name': restaurant_ranked_data.iloc[0]['name'] if not restaurant_ranked_data.empty else "No Donors",
