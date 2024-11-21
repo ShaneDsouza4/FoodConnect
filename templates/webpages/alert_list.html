@@ -30,7 +30,7 @@
                             <th>Item</th>
                             <th>Quantity Needed</th>
                             <th>Description</th>
-                            <!--<th>Status</th>-->
+                            <th>Status</th>
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -41,20 +41,18 @@
                             <td>{{ alert.item_name }}</td>
                             <td>{{ alert.remaining_quantity_needed }}</td>
                             <td>{{ alert.description }}</td>
-{#                            <td>#}
-{#                                <span class="badge #}
-{#                                    {% if alert.response_status == 'pending' %} badge-warning#}
-{#                                    {% elif alert.response_status == 'in_progress' %} badge-primary#}
-{#                                    {% elif alert.response_status == 'completed' %} badge-success#}
-{#                                    {% endif %}">#}
-{#                                    {{ alert.response_status|capfirst }}#}
-{#                                </span>#}
-{#                            </td>#}
                             <td>
-                                {% if alert.response_status == 'completed' %}
-                                    <a href="{% url 'response_status' alert.id %}" class="btn btn-info btn-sm">View Status</a>
-                                {% else %}
-                                    <a href="{% url 'respond_to_donation' alert.id %}" class="btn btn-primary">Donate</a>
+                                <span class="badge 
+                                    {% if alert.response_status == 'pending' %} badge-warning
+                                    {% elif alert.response_status == 'in_progress' %} badge-primary
+                                    {% elif alert.response_status == 'completed' %} badge-success
+                                    {% endif %}">
+                                    {{ alert.response_status|capfirst }}
+                                </span>
+                            </td>
+                            <td>
+                                {% if not alert.hide_donate_button %}
+                                <a href="{% url 'respond_to_donation' alert.id %}" class="btn btn-primary">Donate</a>
                                 {% endif %}
                             </td>
                         </tr>
