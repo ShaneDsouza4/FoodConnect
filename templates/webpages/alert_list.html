@@ -51,10 +51,8 @@
                                 </span>
                             </td>
                             <td>
-                                {% if alert.response_status == 'completed' %}
-                                    <a href="{% url 'response_status' alert.id %}" class="btn btn-info btn-sm">View Status</a>
-                                {% else %}
-                                    <a href="{% url 'respond_to_donation' alert.id %}" class="btn btn-primary">Donate</a>
+                                {% if not alert.hide_donate_button %}
+                                <a href="{% url 'respond_to_donation' alert.id %}" class="btn btn-primary">Donate</a>
                                 {% endif %}
                             </td>
                         </tr>

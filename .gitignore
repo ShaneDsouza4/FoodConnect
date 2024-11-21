@@ -1,6 +1,5 @@
-# Python bytecode files
 *.py[cod]
-__pycache__/
+_pycache_/
 
 # Byte-compiled / optimized / DLL files
 *.pyo
@@ -84,4 +83,4 @@ desktop.ini
 *~
 
 # Thumbnails
-*_thumb.*
+_thumb.

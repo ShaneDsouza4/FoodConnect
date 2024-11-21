@@ -55,7 +55,7 @@ def create_alert(request):
 def alert_list(request):
     alerts = Alert.objects.filter(is_active=True)
 
-    #For Food Banks to see their own listings
+    # For Food Banks to see their own listings
     if hasattr(request.user, 'foodbank'):
         alerts = alerts.filter(created_by=request.user)
 
@@ -63,6 +63,8 @@ def alert_list(request):
         total_donated = alert.responses.aggregate(total=Sum('quantity_donated'))['total'] or 0
         alert.total_quantity_donated = total_donated
         alert.remaining_quantity_needed = alert.quantity_needed - total_donated
+        alert.hide_donate_button = total_donated >= alert.quantity_needed  # Add this flag
+
         if total_donated == 0:
             alert.response_status = "pending"
         elif total_donated < alert.quantity_needed:
@@ -71,6 +73,7 @@ def alert_list(request):
             alert.response_status = "completed"
 
     return render(request, 'webpages/alert_list.html', {'alerts': alerts})
+
 
 @login_required
 def ResponseToDonationViewX(request, alert_id):
