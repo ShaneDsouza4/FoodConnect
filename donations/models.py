@@ -2,6 +2,8 @@ from email.policy import default
 
 from django.contrib.auth.models import User
 from django.db import models
+from django.utils.timezone import now
+
 
 class Donation(models.Model):
     item = models.CharField(max_length=100)
@@ -45,7 +47,7 @@ class Product(models.Model):
     amount_donated = models.PositiveIntegerField(default=0)
     expiry_date = models.DateField(blank=True, null=True)
     image=models.URLField(max_length=300, default='https://img.freepik.com/premium-vector/hand-drawn-food-bank-illustration_23-2149323575.jpg?w=1060')
+    date_created = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.name
-

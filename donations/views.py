@@ -1,9 +1,12 @@
+from datetime import timedelta
+
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.shortcuts import render, redirect
 from django.contrib import messages
+from django.utils.timezone import now
 
-from .forms import CreateDonationForm
+from .forms import CreateDonationForm, AddProductForm
 from donations.models import Donation, Category, Product
 
 
@@ -24,23 +27,27 @@ def donations_view(request):
 @login_required
 def create_donation(request):
     if request.method == 'POST':
-        form = CreateDonationForm(request.POST)
+        form = AddProductForm(request.POST)
         if form.is_valid():
-            alert = Donation(
-                item=form.cleaned_data['item'],
-                quantity=form.cleaned_data['quantity'],
-                urgency_level=form.cleaned_data['urgency_level'],
+            # Create a new Product object
+            product = Product.objects.create(
+                name=form.cleaned_data['name'],
                 description=form.cleaned_data['description'],
-                created_by=request.user
+                category_id=form.cleaned_data['category'],
+                quantity=form.cleaned_data['quantity'],
+                weight=form.cleaned_data['weight'],
+                unit=form.cleaned_data['unit'],
+                expiry_date=form.cleaned_data['expiry_date'],
+                image=form.cleaned_data['image'],
+                donated_by=request.user,
             )
-            alert.save()
+            product.save()
 
-            messages.success(request, 'Donation created successfully!')
+            messages.success(request, 'Donation added successfully!')
             return redirect('donations')
         else:
-            messages.error(request, 'There was an error creating the donation. Please try again.')
-            return redirect('create-donations')
+            messages.error(request, 'Errors in the form.')
     else:
-        form = CreateDonationForm()
+        form = AddProductForm()
 
     return render(request, 'donations/create_donation.html', {'form': form})
