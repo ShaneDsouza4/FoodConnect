@@ -101,6 +101,33 @@
                             </div>
                         </div>
 
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <i class="fas fa-table me-1"></i>
+                                Top Donors
+                            </div>
+                            <div class="card-body" style="max-height: 400px; overflow-y: auto;">
+                                <table id="datatablesSimple" class="table table-striped table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Rank No.</th>
+                                            <th>Name</th>
+                                            <th>Score</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for donator in ranked_donators %}
+                                        <tr>
+                                            <td>{{ forloop.counter }}</td>
+                                            <td>{{ donator.name }}</td>
+                                            <td>{{ donator.score_out_of_100|floatformat:0 }}</td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
                         <!-- Donation by Donor Type Chart Section -->
                         <div class="row mb-5 pb-3 justify-content-center">
                             <div class="col-xl-6">
@@ -320,97 +347,6 @@
                                 });
                             </script>                       
                         </div>
-
-                        <div class="card mb-4">
-                            <div class="card-header">
-                                <i class="fas fa-table me-1"></i>
-                                Top Donors
-                            </div>
-                            <div class="card-body" style="max-height: 400px; overflow-y: auto;">
-                                <table id="datatablesSimple" class="table table-striped table-hover">
-                                    <thead>
-                                        <tr>
-                                            <th>Rank No.</th>
-                                            <th>Name</th>
-                                            <th>Total Donations</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {% for donator in ranked_donators %}
-                                        <tr>
-                                            <td>{{ forloop.counter }}</td>
-                                            <td>{{ donator.name }}</td>
-                                            <td>{{ donator.total_donations }}</td>
-                                        </tr>
-                                        {% endfor %}
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-
-                        <!-- <div class="row custom-row"> -->
-                            <!-- Profiles Only Ranking -->
-                            <!-- <div class="col-md-6 custom-col">
-                                <div class="card">
-                                    <div class="card-header">
-                                        <i class="fas fa-table me-1"></i>
-                                        Top Individual Donors
-                                    </div>
-                                    <div class="card-body" style="max-height: 400px; overflow-y: auto; padding: 8px; margin: 0;">
-
-                                        <table id="datatablesSimple">
-                                            <thead>
-                                                <tr style="color: #82ae46;">
-                                                    <th style="padding-right: 100px;">Rank No.</th>
-                                                    <th style="padding-right: 100px;">Name</th>
-                                                    <th>Total Donations</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                {% for donator in ranked_individual_donators %}
-                                                <tr>
-                                                    <td>{{ forloop.counter }}</td>
-                                                    <td>{{ donator.name }}</td>
-                                                    <td>{{ donator.total_donations }}</td>
-                                                </tr>
-                                                {% endfor %}
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            </div> -->
-                        
-                            <!-- Restaurants Only Ranking -->
-                            <!-- <div class="col-md-6 custom-col">
-                                <div class="card">
-                                    <div class="card-header">
-                                        <i class="fas fa-table me-1"></i>
-                                        Top Restaurant Donors
-                                    </div>
-                                    <div class="card-body" style="max-height: 400px; overflow-y: auto;">
-                                        <table id="datatablesSimple">
-                                            <thead>
-                                                <tr style="color: #82ae46;">
-                                                    <th style="padding-right: 100px;">Rank No.</th>
-                                                    <th style="padding-right: 100px;">Name</th>
-                                                    <th>Total Donations</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                {% for donator in ranked_restaurant_donators %}
-                                                <tr>
-                                                    <td>{{ forloop.counter }}</td>
-                                                    <td>{{ donator.name }}</td>
-                                                    <td>{{ donator.total_donations }}</td>
-                                                </tr>
-                                                {% endfor %}
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            </div>
-                        </div> -->
-                                               
                 </div>
             </main>
 
