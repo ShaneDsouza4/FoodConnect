@@ -1,19 +1,18 @@
-from datetime import timedelta
+import os
+import json
+import pickle
 import numpy as np
 import pandas as pd
+from datetime import timedelta
 from django.shortcuts import render
 from users.models import Profile, Restaurant
 from alerts.models import Alert
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.ensemble import GradientBoostingRegressor, RandomForestRegressor
-from sklearn.model_selection import train_test_split
-from django.db.models import Sum, Count
-from django.utils.timezone import now
-import json
-import pickle
-import os
 from sklearn.metrics import ndcg_score, mean_absolute_error, root_mean_squared_error, r2_score
 from scipy.stats import kendalltau
+from sklearn.model_selection import train_test_split
+from django.db.models import Sum, Count
 
 def train_and_save_model():
     data = load_and_prepare_alldata()
@@ -106,7 +105,7 @@ def calculate_mrr(y_true, y_pred):
             return 1 / rank
     return 0
 
-
+# Ranking Donators using Gradient Boosting Regressor
 def rank_donators_using_GBC(data):
     features = ['total_donations', 'donation_frequency', 'donation_variety_count',
                 'donation_volume', 'average_rating', 'response_to_emergency_count']
@@ -150,26 +149,7 @@ def rank_donators_using_GBC(data):
     print(f"RMSE (Gradient Booster Regressor): {rmse}")
     print(f"R² (Gradient Booster Regressor): {r2}")
 
-    data['predicted_score'] = proxy_model.predict(X)
-
-    min_percentile = data['predicted_score'].quantile(0.05)
-    max_percentile = data['predicted_score'].quantile(0.95)
-
-    if max_percentile - min_percentile == 0:
-        data['score_out_of_100'] = 0
-    else:
-        data['score_out_of_100'] = (
-            (data['predicted_score'] - min_percentile) /
-            (max_percentile - min_percentile) * 100
-        )
-
-    data['score_out_of_100'] = data['score_out_of_100'].clip(lower=0, upper=100)
-
-    ranked_data = data.sort_values(by='score_out_of_100', ascending=False).head(10)
-    
-    return ranked_data
-
-
+# Ranking Donators using Random Forest
 def rank_donators_rf(data):
     features = ['total_donations', 'donation_frequency', 'donation_variety_count',
                 'donation_volume', 'average_rating', 'response_to_emergency_count']
@@ -223,25 +203,7 @@ def rank_donators_rf(data):
     print(f"RMSE (Random Forest): {rmse}")
     print(f"R² (Random Forest): {r2}")
 
-    data['predicted_score_rf'] = rf_model.predict(X)
-    min_percentile = data['predicted_score_rf'].quantile(0.05)
-    max_percentile = data['predicted_score_rf'].quantile(0.95)
-
-    if max_percentile - min_percentile == 0:
-        data['score_out_of_100_rf'] = 0
-    else:
-        data['score_out_of_100_rf'] = (
-            (data['predicted_score_rf'] - min_percentile) /
-            (max_percentile - min_percentile) * 100
-        )
-
-    data['score_out_of_100_rf'] = data['score_out_of_100_rf'].clip(lower=0, upper=100)
-
-    ranked_data_rf = data.sort_values(by='score_out_of_100_rf', ascending=False).head(10)
-    
-    return ranked_data_rf
-
-# OLD
+# Legacy algorithm (Gradient Boosting Regressor) for Ranking Donators
 def rank_donators(data):
     features = ['total_donations', 'donation_frequency', 'donation_variety_count',
                 'donation_volume', 'average_rating', 'response_to_emergency_count']
