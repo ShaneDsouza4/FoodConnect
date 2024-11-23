@@ -2,12 +2,12 @@ from datetime import timedelta
 
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.utils.timezone import now
 
 from .forms import CreateDonationForm, AddProductForm
-from donations.models import Donation, Category, Product
+from donations.models import Category, Product, Donation
 
 
 # Create your views here.
@@ -23,6 +23,12 @@ def donations_view(request):
     page_number = request.GET.get('page', 1)
     page_obj = paginator.get_page(page_number)
     return render(request, '../templates/donations/donations.html', {'products':page_obj, 'categories': categories, 'page_obj': page_obj,'current_category': int(category_id) if category_id else None,})
+
+# views.py
+@login_required
+def product_view(request, product_id):
+    product = Product.objects.get(pk=product_id)
+    return render(request, '../templates/donations/product_detail.html', {'product':product})
 
 @login_required
 def create_donation(request):
@@ -40,6 +46,7 @@ def create_donation(request):
                 expiry_date=form.cleaned_data['expiry_date'],
                 image=form.cleaned_data['image'],
                 donated_by=request.user,
+                date_created=now(),
             )
             product.save()
 
@@ -80,3 +87,28 @@ def create_donation(request):
         form = AddProductForm()
 
     return render(request, 'donations/create_donation.html', {'form': form})
+@login_required
+
+def place_order(request):
+    if request.method == 'POST':
+        product_id = request.POST.get('product_id')
+        quantity = int(request.POST.get('quantity'))
+        product = get_object_or_404(Product, id=product_id)
+
+        if product.quantity < quantity:
+            messages.error(request, "Not enough quantity available.")
+            return redirect('product_detail', product.id)
+
+        product.quantity -= quantity
+        product.amount_donated += quantity
+        Donation.objects.create(
+            user=request.user,
+            product=product,
+            quantity=quantity
+        )
+        product.save()
+        messages.success(request, "Order placed successfully!")
+        return render(request, '../templates/donations/donation_list.html')
+
+    messages.error(request, "Invalid request.")
+    # return render(request, '../templates/donations/product_detail.html', {'product': product})
