@@ -4,25 +4,6 @@ from django.contrib.auth.models import User
 from django.db import models
 from django.utils.timezone import now
 
-
-class Donation(models.Model):
-    item = models.CharField(max_length=100)
-    quantity = models.PositiveIntegerField()
-    urgency_level = models.CharField(
-        max_length=20,
-        choices=[('low', 'Low'), ('medium', 'Medium'), ('high', 'High')],
-        default='medium'
-    )
-    created_by = models.ForeignKey(
-        User,
-        on_delete=models.SET_NULL,
-        null=True,
-    )
-    created_at = models.DateTimeField(auto_now_add=True)
-    description = models.TextField(blank=True, null=True)
-    is_active = models.BooleanField(default=True)
-    last_updated = models.DateTimeField(auto_now=True)
-
 class Category(models.Model):
     name = models.CharField(max_length=100, unique=True)
 
@@ -39,7 +20,7 @@ class Product(models.Model):
     name = models.CharField(max_length=100)
     donated_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     description = models.TextField(null=True, blank=True)
-    category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='products')
+    category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='category')
     quantity = models.PositiveIntegerField()
     weight = models.PositiveIntegerField()
     unit = models.CharField(max_length=10, choices=UNIT_CHOICES)
@@ -51,3 +32,19 @@ class Product(models.Model):
 
     def __str__(self):
         return self.name
+
+class Donation(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, null=True)
+    quantity = models.PositiveIntegerField()
+
+    def __str__(self):
+        return f"Donation {self.id} by {self.user.username}"
+
+    def save(self, *args, **kwargs):
+        if self.product.quantity >= self.quantity:
+            self.product.quantity -= self.quantity
+            self.product.save()
+        else:
+            raise ValueError("Not enough quantity available.")
+        super().save(*args, **kwargs)

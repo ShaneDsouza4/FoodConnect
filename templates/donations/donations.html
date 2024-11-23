@@ -47,7 +47,7 @@
                                     <img class="img-fluid" src="{{ product.image }}" alt="{{ product.name }}">
                                 </a>
                                 <div class="text text-center">
-                                    <h3><a href="#">{{ product.name }}</a></h3>
+                                    <h3><a href="{% url 'product_detail' product.id %}">{{ product.name }}</a></h3>
                                     <p><a href="#">by {{ product.donated_by }}</a></p>
                                 </div>
                             </div>

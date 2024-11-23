@@ -50,6 +50,7 @@ coverage.xml
 
 # Django migration files
 migrations/
+fixtures/
 
 # Jupyter Notebook checkpoints
 .ipynb_checkpoints
