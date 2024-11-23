@@ -112,4 +112,9 @@ def place_order(request):
         return render(request, '../templates/donations/donation_list.html')
 
     messages.error(request, "Invalid request.")
-    # return render(request, '../templates/donations/product_detail.html', {'product': product})
+    return redirect('product_list')
+
+
+@login_required
+def view_orders(request):
+    return render(request, '../templates/donations/donation_list.html')
