@@ -27,8 +27,9 @@ def donations_view(request):
 # views.py
 @login_required
 def product_view(request, product_id):
-    product = Product.objects.get(pk=product_id)
-    return render(request, '../templates/donations/product_detail.html', {'product':product})
+    product = get_object_or_404(Product, pk=product_id)
+    related_products = Product.objects.filter(category=product.category).exclude(pk=product_id)
+    return render(request, '../templates/donations/product_detail.html', {'product': product, 'related_products': related_products})
 
 @login_required
 def create_donation(request):
