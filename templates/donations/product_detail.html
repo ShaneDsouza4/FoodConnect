@@ -34,7 +34,7 @@
 {#								<a href="#" class="mr-2" style="color: #000;">100 <span style="color: #bbb;">Rating</span></a>#}
 {#							</p>#}
 							<p class="text-left">
-								<a href="#" class="mr-2" style="color: #000;">{{ product.amount_donated }} <span style="color: #bbb;">Donated</span></a>
+								<a href="#" class="mr-2" style="color: #000;">{{ product.amount_donated }}<span style="color: #bbb;">Donated</span></a>
 							</p>
 						</div>
     				<p>{{ product.description }}</p>
@@ -55,7 +55,7 @@
 	                   <i class="ion-ios-remove"></i>
 	                	</button>
 	            		</span>
-	             	<input type="text" id="quantity" name="quantity" class="form-control input-number" value="1" min="1" max="{{ product.quantity }}">
+	             	<input type="text" id="quantity" name="quantity" class="form-control input-number" value="1" min="1" max="{{ product.quantity }}" readonly>
 	             	<span class="input-group-btn ml-2">
 	                	<button type="button" class="quantity-right-plus btn" data-type="plus" data-field="">
 	                     <i class="ion-ios-add"></i>
@@ -184,9 +184,6 @@
          closeBtn.addEventListener("click", function () {
                 $('#confirmationModal').modal('hide');
             });
-        quantityInput.addEventListener("input", function () {
-            quantityHiddenInput.value = quantityInput.value;
-        });
             quantityHiddenInput.value = quantityInput.value;
 
 
