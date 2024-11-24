@@ -39,7 +39,10 @@ class Donation(models.Model):
     quantity = models.PositiveIntegerField()
 
     def __str__(self):
-        return f"Donation {self.id} by {self.user.username}"
+       # return f"Donation {self.id} by {self.user.username}"
+       if self.user:
+           return f"Donation {self.id} by {self.user.username}"
+       return f"Donation {self.id} by user"
 
     def save(self, *args, **kwargs):
         if self.product.quantity >= self.quantity:
