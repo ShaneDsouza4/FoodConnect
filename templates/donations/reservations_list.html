@@ -1,0 +1,73 @@
+{% extends 'webpages/base.html' %}
+
+{% load static %}
+{% block content %}
+
+    <div class="hero-wrap hero-bread" style="background-image: url('{% static "images/bg_1.jpg" %}');">
+      <div class="container">
+        <div class="row no-gutters slider-text align-items-center justify-content-center">
+          <div class="col-md-9 ftco-animate text-center">
+            <h1 class="mb-0 bread">Your Reservations</h1>
+          </div>
+        </div>
+      </div>
+    </div>
+ <section class="ftco-section ftco-cart">
+			<div class="container">
+				<div class="row">
+    			<div class="col-md-12 ftco-animate">
+    				<div class="cart-list">
+                        {% if reservations %}
+	    				<table class="table">
+						    <thead class="thead-primary">
+						      <tr class="text-center">
+                                  <th>Product</th>
+                                  <th>Donor</th>
+                                  <th>Quantity Reserved</th>
+                                  <th>Status</th>
+                                  <th>Date Reserved</th>
+						      </tr>
+						    </thead>
+						    <tbody>
+                            {% for reservation in reservations %}
+						      <tr class="text-center">
+                                  <td class="product-name"><h3>{{ reservation.product.name }}</h3></td>
+                                  <td>
+                                      {% if reservation.product.donated_by.profile %}
+                                          {{ reservation.product.donated_by.profile.get_full_name }}
+                                      {% elif reservation.product.donated_by.restaurant_profile %}
+                                          {{ reservation.product.donated_by.restaurant_profile.restaurant_name }}
+                                      {% elif reservation.product.donated_by.foodbank %}
+                                          {{ reservation.product.donated_by.foodbank.foodbank_name }}
+                                      {% else %}
+                                          {{ reservation.product.donated_by.username }}
+                                      {% endif %}
+                                  </td>
+                                  <td>{{ reservation.quantity }}</td>
+                                  
+                                  <td>
+                                    {% if reservation.status == 'completed' %}
+                                        <span class="badge bg-success">Completed</span>
+                                    {% elif reservation.status == 'canceled' %}
+                                        <span class="badge bg-danger">Canceled</span>
+                                    {% else %}
+                                        <span class="badge bg-warning">Active</span>
+                                    {% endif %}
+                                  </td>
+                                  <td>
+                                   {{ reservation.date_reserved|date:"F j, Y" }}
+                                  </td>
+						      </tr>
+                            {% endfor %}
+						    </tbody>
+						  </table>
+                        {% else %}
+                            <p>No Reservations Found.</p>
+                        {% endif %}
+					  </div>
+    			</div>
+    		</div>
+			</div>
+		</section>
+
+{% endblock %}

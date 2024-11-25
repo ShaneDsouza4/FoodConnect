@@ -40,6 +40,9 @@ class Profile(models.Model):
     average_rating = models.FloatField(blank=True, null=True)
     response_to_emergency_count = models.IntegerField(default=0)
 
+    def get_full_name(self):
+       return f"{self.first_name} {self.last_name}".strip()
+
     def __str__(self):
         return f"{self.user.username}'s profile"
 
@@ -66,6 +69,9 @@ class Restaurant(models.Model):
     average_rating = models.FloatField(blank=True, null=True)
     response_to_emergency_count = models.IntegerField(default=0)
 
+    def get_full_name(self):
+       return self.restaurant_name
+
     def __str__(self):
         return f"{self.user.username} - {self.restaurant_name}"
 
@@ -84,6 +90,9 @@ class FoodBank(models.Model):
     id_verification = models.ImageField(upload_to='id_cards/', blank=True, null=True)
     is_verified = models.BooleanField(default=False)
     emergency_alerts_count = models.IntegerField(default=0)
+
+    def get_full_name(self):
+       return self.foodbank_name
 
     def __str__(self):
         return f"{self.user.username}'s Food Bank"

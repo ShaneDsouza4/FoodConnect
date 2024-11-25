@@ -1,0 +1,72 @@
+{% extends 'webpages/base.html' %}
+
+{% load static %}
+{% block content %}
+
+    <div class="hero-wrap hero-bread" style="background-image: url('{% static "images/bg_1.jpg" %}');">
+      <div class="container">
+        <div class="row no-gutters slider-text align-items-center justify-content-center">
+          <div class="col-md-9 ftco-animate text-center">
+            <h1 class="mb-0 bread">Your Reservations</h1>
+          </div>
+        </div>
+      </div>
+    </div>
+ <section class="ftco-section ftco-cart">
+			<div class="container">
+				<div class="row">
+    			<div class="col-md-12 ftco-animate">
+    				<div class="cart-list">
+                        {% if reservations %}
+	    				<table class="table">
+						    <thead class="thead-primary">
+						      <tr class="text-center">
+                                  <th>Product</th>
+                                  <th>Reserver</th>
+                                  <th>Quantity</th>
+                                  <th>Status</th>
+                                  <th>Date Reserved</th>
+                                  <th>Actions</th>
+						      </tr>
+						    </thead>
+						    <tbody>
+                            {% for reservation in reservations %}
+						      <tr class="text-center">
+                                <td>{{ reservation.user.get_full_name|default:reservation.user.username }}</td>
+                                <td>{{ reservation.quantity }}</td>
+                                <td>
+                                     <span class="badge 
+                    {% if reservation.status == 'active' %} badge-success
+                    {% elif reservation.status == 'completed' %} badge-secondary
+                    {% elif reservation.status == 'canceled' %} badge-danger
+                    {% endif %}
+                  ">
+                    {{ reservation.get_status_display }}
+                  </span>
+                                </td>
+                                <td>{{ reservation.date_reserved|date:"F j, Y, g:i a" }}</td>
+                                <td>
+                                    <form method="post" action="{% url 'update_reservation_status' reservation.id %}">
+                                        {% csrf_token %}
+                                        <select name="status" class="form-control form-control-sm">
+                                            <option value="active" {% if reservation.status == 'active' %}selected{% endif %}>Active</option>
+                                            <option value="completed" {% if reservation.status == 'completed' %}selected{% endif %}>Completed</option>
+                                            <option value="canceled" {% if reservation.status == 'canceled' %}selected{% endif %}>Canceled</option>
+                                        </select>
+                                        <button type="submit" class="btn btn-primary btn-sm mt-2">Update</button>
+                                    </form>
+                                </td>
+						      </tr>
+                            {% endfor %}
+						    </tbody>
+						  </table>
+                        {% else %}
+                            <p>No Reservations found for your donations.</p>
+                        {% endif %}
+					  </div>
+    			</div>
+    		</div>
+			</div>
+		</section>
+
+{% endblock %}

@@ -3,7 +3,7 @@
 {% load static %}
 {% block content %}
 
-    <div class="hero-wrap hero-bread" style="background-image: url('{% static "images/bg_1.jpg" %}');">
+    <div class="hero-wrap hero-bread" style="background-image: url('{% static "images/donation-list-box-bg.png" %}');">
       <div class="container">
         <div class="row no-gutters slider-text align-items-center justify-content-center">
           <div class="col-md-9 ftco-animate text-center">
@@ -17,13 +17,25 @@
       <div class="container">
         <div class="row mb-5 pb-3">
           <div class="col-md-6 offset-md-3">
-            <h2 class="mb-4">Please Submit your request here</h2>
+            <h2 class="mb-4">
+                {% if donation %}
+                    Edit Your Donation
+                {% else %}
+                    Donate Today
+                {% endif %}
+            </h2>
 
           
-            <form method="post" action="{% url 'create-donation' %}" enctype="multipart/form-data">
+            <form method="post" action="" enctype="multipart/form-data">
                 {% csrf_token %}
                 {{ form.as_p }}
-                <button type="submit" class="btn btn-primary">Submit Request</button>
+                <button type="submit" class="btn btn-primary">
+                  {% if donation %}
+                    Save Changes
+                  {% else %}
+                    Submit Donation
+                  {% endif %}
+                </button>
             </form>
 
           </div>

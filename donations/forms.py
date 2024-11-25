@@ -62,9 +62,8 @@ class AddProductForm(forms.Form):
         required=False,
         widget=forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
     )
-    image = forms.URLField(
-        label="Image URL",
-        max_length=300,
+    image = forms.ImageField(
+        label="Upload Image",
         required=False,
-        widget=forms.URLInput(attrs={'class': 'form-control', 'placeholder': 'Enter Image URL'}),
+        widget=forms.ClearableFileInput(attrs={'class': 'form-control'}),
     )

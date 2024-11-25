@@ -10011,3 +10011,32 @@ textarea.form-control {
   100% {
     stroke-dasharray: 89, 200;
     stroke-dashoffset: -136px; } }
+
+
+.fixed-size {
+    width: auto;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 8px;
+    display: block;
+    margin: 0 auto;
+}
+
+
+#placeOrderBtn {
+    background-color: #82AE46;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 15px 30px;
+    font-size: 18px;
+    text-align: center;
+    display: inline-block;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+#placeOrderBtn:hover {
+    background-color: #218838;
+    text-decoration: none;
+}

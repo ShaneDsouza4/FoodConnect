@@ -11,11 +11,21 @@
                 <li class="nav-item"><a class="nav-link" href="{% url 'about' %}">About</a></li>
                 <li class="nav-item"><a class="nav-link" href="{% url 'contact_us' %}">Contact</a></li>
                 <li class="nav-item"><a class="nav-link" href="{% url 'donations' %}">Donations</a></li>
+
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="{% url 'donations' %}" id="dropdown04" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">DonationsX</a>
+                    <div class="dropdown-menu" aria-labelledby="dropdown04">
+                            <a class="dropdown-item" href="{% url 'donations' %}">All Donations</a>
+                            <a class="dropdown-item" href="{% url 'donor_donations' %}">Your Donations</a>
+                            <a class="dropdown-item" href="{% url 'donor_reservations' %}">Reservations for Your Donations</a>
+                    </div>
+                </li>
+
                 <li class="nav-item"><a class="nav-link" href="{% url 'analytics' %}">Analytics</a></li>
                 <li class="nav-item"><a class="nav-link" href="{% url 'alert_list' %}">Alerts</a></li>
 
                 {% if user.is_authenticated %}
-                                    <li class="nav-item"><a class="nav-link" href="{% url 'view_orders' %}">Orders</a></li>
+                                    <li class="nav-item"><a class="nav-link" href="{% url 'view_reservations' %}">Reservations</a></li>
 
                     <li class="nav-item"><a class="nav-link" href="{% url 'user_profile' %}">Profile</a></li>
                     <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}">Logout</a></li>

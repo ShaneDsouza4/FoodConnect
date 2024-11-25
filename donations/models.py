@@ -27,22 +27,30 @@ class Product(models.Model):
     rating = models.PositiveIntegerField(default=0)
     amount_donated = models.PositiveIntegerField(default=0)
     expiry_date = models.DateField(blank=True, null=True)
-    image=models.URLField(max_length=300, default='https://img.freepik.com/premium-vector/hand-drawn-food-bank-illustration_23-2149323575.jpg?w=1060')
+    #image=models.URLField(max_length=300, default='https://img.freepik.com/premium-vector/hand-drawn-food-bank-illustration_23-2149323575.jpg?w=1060')
+    image = models.ImageField(upload_to='product_images/', blank=True, null=True)
     date_created = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.name
 
-class Donation(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
-    product = models.ForeignKey(Product, on_delete=models.CASCADE, null=True)
+class Reservation(models.Model):
+    STATUS_CHOICES = [
+        ('active', 'Active'),
+        ('completed', 'Completed'),
+        ('canceled', 'Canceled'),
+    ]
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField()
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='active')
+    date_reserved = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-       # return f"Donation {self.id} by {self.user.username}"
-       if self.user:
-           return f"Donation {self.id} by {self.user.username}"
-       return f"Donation {self.id} by user"
+        product_name = self.product.name if self.product else "Unknown Product"
+        user_name = self.user.username if self.user else "Unknown User"
+        return f"Reservation {self.id}: {self.quantity} of {product_name} by {user_name}"
+
 
     def save(self, *args, **kwargs):
         if self.product.quantity >= self.quantity:

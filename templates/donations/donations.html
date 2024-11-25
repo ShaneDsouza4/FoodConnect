@@ -7,6 +7,12 @@
         <div class="container">
             <div class="row no-gutters slider-text align-items-center justify-content-center">
                 <div class="col-md-9 ftco-animate text-center">
+                    <p class="breadcrumbs">
+                        <span class="mr-2">
+                            <a href="{% url 'donor_donations' %}">View Your Donations</a>
+                        </span>
+                        
+                    </p>
                     <h1 class="mb-0 bread">Donations</h1>
                 </div>
             </div>
@@ -44,11 +50,18 @@
                         <div class="col-md-6 col-lg-3 ftco-animate">
                             <div class="product py-3 pb-4 px-3 d-flex flex-column align-items-center justify-content-between" style="height: 100%;">
                                 <a href="{% url 'product_detail' product.id %}" class="img-prod">
-                                    <img class="img-fluid" src="{{ product.image }}" alt="{{ product.name }}">
+                                     {% if product.image %}
+                                         <img class="img-fluid fixed-size" src="{{ product.image.url }}" alt="{{ product.name }}">
+                                     {% else %}
+                                         <img class="img-fluid fixed-size" src="{% static 'images/default-foodbox.jpg' %}" alt="Default Image">
+                                    {% endif %}
+
                                 </a>
                                 <div class="text text-center">
                                     <h3><a href="{% url 'product_detail' product.id %}">{{ product.name }}</a></h3>
                                     <p><a href="{% url 'product_detail' product.id %}">by {{ product.donated_by }}</a></p>
+                                    <a href="{% url 'product_detail' product.id %}"><button class="btn btn-primary">View</button></a>
+
                                 </div>
                             </div>
                         </div>
@@ -85,7 +98,7 @@
             {% else %}
                 <div class="row mt-5">
                     <div class="col text-center">
-                        <p>No products found, <a href="{% url 'donate' %}">Donate now!</a></p>
+                        <p>No dontions found, <a href="{% url 'donate' %}">Donate now!</a></p>
                     </div>
                 </div>
             {% endif %}
