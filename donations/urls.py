@@ -10,9 +10,9 @@ urlpatterns = [
 
     path('donor-reservations/', views.donor_reservations, name='donor_reservations'),
 
-path('donations/<int:donation_id>/reservations/', views.reservations_for_donation, name='reservations_for_donation'),
+    path('donations/<int:donation_id>/reservations/', views.reservations_for_donation, name='reservations_for_donation'),
 
-path('reservations/<int:reservation_id>/update/', views.update_reservation_status, name='update_reservation_status'),
+    path('reservations/<int:reservation_id>/update/', views.update_reservation_status, name='update_reservation_status'),
 
     path('place-order/', views.place_order, name='place_order'),
     path('my-donations/', views.donor_donations, name='donor_donations'),

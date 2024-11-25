@@ -17,9 +17,9 @@ def donations_view(request):
     categories = Category.objects.all()
     category_id = request.GET.get('category_id')
     if category_id:
-        products = Product.objects.filter(category_id=category_id)
+        products = Product.objects.filter(category_id=category_id, expiry_date__gte=now())
     else:
-        products = Product.objects.all()
+        products = Product.objects.filter(expiry_date__gte=now())
     paginator = Paginator(products, 8)
     page_number = request.GET.get('page', 1)
     page_obj = paginator.get_page(page_number)
