@@ -3,11 +3,10 @@
 {% load static %}
 {% block content %}
     <!-- Hero Start -->
-<div class="hero-wrap hero-bread" style="background-image: url('{% static "images/bg_1.jpg" %}');">
+    <div class="hero-wrap hero-bread" style="background-image: url('{% static "images/bg_1.jpg" %}');">
       <div class="container">
         <div class="row no-gutters slider-text align-items-center justify-content-center">
           <div class="col-md-9 ftco-animate text-center">
-          	<p class="breadcrumbs"><span class="mr-2"><a href="{% url 'landing' %}">Home</a></span> <span>About us</span></p>
             <h1 class="mb-0 bread">About us</h1>
           </div>
         </div>
@@ -16,35 +15,33 @@
     <!-- Hero End -->
 
     <section class="ftco-section ftco-no-pb ftco-no-pt bg-light">
-			<div class="container">
-				<div class="row">
-					<div class="col-md-5 p-md-5 img img-2 d-flex justify-content-center align-items-center" style="background-image: url('{% static "images/about.jpg" %}');">
-						<a href="https://vimeo.com/45830194" class="icon popup-vimeo d-flex justify-content-center align-items-center">
-							<span class="icon-play"></span>
-						</a>
-					</div>
-					<div class="col-md-7 py-5 wrap-about pb-md-5 ftco-animate">
-	          <div class="heading-section-bold mb-4 mt-md-5">
-	          	<div class="ml-md-0">
-		            <h2 class="mb-4">Welcome to Vegefoods an eCommerce website</h2>
-	            </div>
-	          </div>
-	          <div class="pb-md-5">
-	          	<p>Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts. Separated they live in Bookmarksgrove right at the coast of the Semantics, a large language ocean.</p>
-							<p>But nothing the copy said could convince her and so it didn’t take long until a few insidious Copy Writers ambushed her, made her drunk with Longe and Parole and dragged her into their agency, where they abused her for their.</p>
-							<p><a href="#" class="btn btn-primary">Shop now</a></p>
-						</div>
-					</div>
-				</div>
-			</div>
-		</section>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-5 p-md-5 img img-2 d-flex justify-content-center align-items-center" style="background-image: url('{% static "images/about-bg.jpg" %}');">
+                    
+                </div>
+                <div class="col-md-7 py-5 wrap-about pb-md-5 ftco-animate">
+	                <div class="heading-section-bold mb-4 mt-md-5">
+	          	        <div class="ml-md-0">
+		                    <h2 class="mb-4">Welcome to FoodConnect</h2>
+	                    </div>
+	                </div>
+	                <div class="pb-md-5">
+	          	        <p>FoodConnect is dedicated to reducing food waste and fostering sustainable communities. We bring together donors and recipients to ensure surplus food reaches those in need.</p>
+                        <p>Join us in creating meaningful change, supporting sustainability, and empowering communities through innovative food-sharing solutions.</p>
+                        <p><a href="{% url 'donations' %}" class="btn btn-primary">Explore Donations</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-		<section class="ftco-section ftco-no-pt ftco-no-pb py-5 bg-light">
+    <section class="ftco-section ftco-no-pt ftco-no-pb py-5 bg-light">
       <div class="container py-4">
         <div class="row d-flex justify-content-center py-5">
           <div class="col-md-6">
           	<h2 style="font-size: 22px;" class="mb-0">Subcribe to our Newsletter</h2>
-          	<span>Get e-mail updates about our latest shops and special offers</span>
+          	<span>Get e-mail updates about new donations</span>
           </div>
           <div class="col-md-6 d-flex align-items-center">
             <form action="#" class="subscribe-form">
@@ -58,56 +55,56 @@
       </div>
     </section>
 
-		<section class="ftco-section ftco-counter img" id="section-counter" style="background-image: url('{% static " images/bg_3.jpg" %}');">
+    <section class="ftco-section ftco-counter img" id="section-counter" style="background-image: url('{% static " images/bg_3.jpg" %}');">
     	<div class="container">
     		<div class="row justify-content-center py-5">
     			<div class="col-md-10">
 		    		<div class="row">
-		          <div class="col-md-3 d-flex justify-content-center counter-wrap ftco-animate">
-		            <div class="block-18 text-center">
-		              <div class="text">
-		                <strong class="number" data-number="10000">0</strong>
-		                <span>Happy Customers</span>
-		              </div>
+		                <div class="col-md-3 d-flex justify-content-center counter-wrap ftco-animate">
+		                    <div class="block-18 text-center">
+		                        <div class="text">
+		                            <strong class="number" data-number="500">0</strong>
+		                            <span>Meals Shared</span>
+		                        </div>
+		                    </div>
+		                </div>
+		                <div class="col-md-3 d-flex justify-content-center counter-wrap ftco-animate">
+		                    <div class="block-18 text-center">
+		                        <div class="text">
+		                            <strong class="number" data-number="200">0</strong>
+		                            <span>Donors</span>
+		                        </div>
+		                    </div>
+		                </div>
+		                <div class="col-md-3 d-flex justify-content-center counter-wrap ftco-animate">
+		                    <div class="block-18 text-center">
+		                        <div class="text">
+		                            <strong class="number" data-number="300">0</strong>
+		                            <span>Recipients</span>
+		                        </div>
+		                    </div>
+		                </div>
+		                <div class="col-md-3 d-flex justify-content-center counter-wrap ftco-animate">
+		                    <div class="block-18 text-center">
+		                        <div class="text">
+		                            <strong class="number" data-number="50">0</strong>
+		                            <span>Communities Supported</span>
+		                        </div>
+		                    </div>
+		                </div>
 		            </div>
-		          </div>
-		          <div class="col-md-3 d-flex justify-content-center counter-wrap ftco-animate">
-		            <div class="block-18 text-center">
-		              <div class="text">
-		                <strong class="number" data-number="100">0</strong>
-		                <span>Branches</span>
-		              </div>
-		            </div>
-		          </div>
-		          <div class="col-md-3 d-flex justify-content-center counter-wrap ftco-animate">
-		            <div class="block-18 text-center">
-		              <div class="text">
-		                <strong class="number" data-number="1000">0</strong>
-		                <span>Partner</span>
-		              </div>
-		            </div>
-		          </div>
-		          <div class="col-md-3 d-flex justify-content-center counter-wrap ftco-animate">
-		            <div class="block-18 text-center">
-		              <div class="text">
-		                <strong class="number" data-number="100">0</strong>
-		                <span>Awards</span>
-		              </div>
-		            </div>
-		          </div>
-		        </div>
-	        </div>
-        </div>
+	            </div>
+            </div>
     	</div>
     </section>
 
-		<section class="ftco-section testimony-section">
+    <section class="ftco-section testimony-section">
       <div class="container">
         <div class="row justify-content-center mb-5 pb-3">
           <div class="col-md-7 heading-section ftco-animate text-center">
           	<span class="subheading">Testimony</span>
-            <h2 class="mb-4">Our satisfied customer says</h2>
-            <p>Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts. Separated they live in</p>
+            <h2 class="mb-4">What Our Community Say</h2>
+            <p>Hear from donors and recipients who have experienced the positive impact of connecting surplus food to those in need, fostering sustainability and care.</p>
           </div>
         </div>
         <div class="row ftco-animate">
@@ -121,9 +118,9 @@
                     </span>
                   </div>
                   <div class="text text-center">
-                    <p class="mb-5 pl-4 line">Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts.</p>
-                    <p class="name">Garreth Smith</p>
-                    <span class="position">Marketing Manager</span>
+                    <p class="mb-5 pl-4 line">"FoodConnect has transformed the way we address surplus food, creating a positive impact on both donors and recipients."</p>
+                    <p class="name">Mike Brown</p>
+                    <span class="position">Community Advocate</span>
                   </div>
                 </div>
               </div>
@@ -135,9 +132,9 @@
                     </span>
                   </div>
                   <div class="text text-center">
-                    <p class="mb-5 pl-4 line">Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts.</p>
+                    <p class="mb-5 pl-4 line">"FoodConnect is an inspiring platform that bridges the gap between surplus and need, fostering a sustainable community."</p>
                     <p class="name">Garreth Smith</p>
-                    <span class="position">Interface Designer</span>
+                    <span class="position">Platform User</span>
                   </div>
                 </div>
               </div>
@@ -149,37 +146,23 @@
                     </span>
                   </div>
                   <div class="text text-center">
-                    <p class="mb-5 pl-4 line">Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts.</p>
-                    <p class="name">Garreth Smith</p>
-                    <span class="position">UI Designer</span>
+                    <p class="mb-5 pl-4 line">"Using FoodConnect has been a game-changer, helping communities connect and reduce food waste effectively."</p>
+                    <p class="name">Warren Trent</p>
+                    <span class="position">Platform User</span>
                   </div>
                 </div>
               </div>
               <div class="item">
                 <div class="testimony-wrap p-4 pb-5">
-                  <div class="user-img mb-5" style="background-image: url('{% static "images/person_1.jpg" %}' )">
+                  <div class="user-img mb-5" style="background-image: url('{% static "images/person_4.jpg" %}' )">
                     <span class="quote d-flex align-items-center justify-content-center">
                       <i class="icon-quote-left"></i>
                     </span>
                   </div>
                   <div class="text text-center">
-                    <p class="mb-5 pl-4 line">Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts.</p>
-                    <p class="name">Garreth Smith</p>
-                    <span class="position">Web Developer</span>
-                  </div>
-                </div>
-              </div>
-              <div class="item">
-                <div class="testimony-wrap p-4 pb-5">
-                  <div class="user-img mb-5" style="background-image: url('{% static "images/person_1.jpg" %}' )">
-                    <span class="quote d-flex align-items-center justify-content-center">
-                      <i class="icon-quote-left"></i>
-                    </span>
-                  </div>
-                  <div class="text text-center">
-                    <p class="mb-5 pl-4 line">Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts.</p>
-                    <p class="name">Garreth Smith</p>
-                    <span class="position">System Analyst</span>
+                    <p class="mb-5 pl-4 line">"FoodConnect has redefined the way technology can bridge gaps, creating a sustainable and impactful community."</p>
+                    <p class="name">Jake Paul</p>
+                    <span class="position">Platform Supporter</span>
                   </div>
                 </div>
               </div>
@@ -190,54 +173,54 @@
     </section>
 
     <section class="ftco-section bg-light">
-			<div class="container">
-				<div class="row no-gutters ftco-services">
-          <div class="col-lg-3 text-center d-flex align-self-stretch ftco-animate">
-            <div class="media block-6 services mb-md-0 mb-4">
-              <div class="icon bg-color-1 active d-flex justify-content-center align-items-center mb-2">
-            		<span class="flaticon-shipped"></span>
-              </div>
-              <div class="media-body">
-                <h3 class="heading">Free Shipping</h3>
-                <span>On order over $100</span>
-              </div>
+        <div class="container">
+            <div class="row no-gutters ftco-services">
+                <div class="col-md-3 text-center d-flex align-self-stretch ftco-animate">
+                    <div class="media block-6 services mb-md-0 mb-4">
+                        <div class="icon bg-color-1 active d-flex justify-content-center align-items-center mb-2">
+                            <span class="flaticon-box"></span>
+                        </div>
+                        <div class="media-body">
+                            <h3 class="heading">Free Redistribution</h3>
+                            <span>No cost for surplus donations</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 text-center d-flex align-self-stretch ftco-animate">
+                    <div class="media block-6 services mb-md-0 mb-4">
+                        <div class="icon bg-color-2 d-flex justify-content-center align-items-center mb-2">
+            		        <span class="flaticon-diet"></span>
+                        </div>
+                        <div class="media-body">
+                            <h3 class="heading">Always Fresh</h3>
+                            <span>Carefully packaged for you</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 text-center d-flex align-self-stretch ftco-animate">
+                    <div class="media block-6 services mb-md-0 mb-4">
+                        <div class="icon bg-color-3 d-flex justify-content-center align-items-center mb-2">
+            		        <span class="flaticon-award"></span>
+                        </div>
+                        <div class="media-body">
+                            <h3 class="heading">Superior Quality</h3>
+                            <span>Ensuring excellence every time</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 text-center d-flex align-self-stretch ftco-animate">
+                    <div class="media block-6 services mb-md-0 mb-4">
+                        <div class="icon bg-color-4 d-flex justify-content-center align-items-center mb-2">
+            		        <span class="flaticon-customer-service"></span>
+                        </div>
+                        <div class="media-body">
+                            <h3 class="heading">Community Focused</h3>
+                            <span>Building connections that matter</span>
+                        </div>
+                    </div>
+                </div>
             </div>
-          </div>
-          <div class="col-lg-3 text-center d-flex align-self-stretch ftco-animate">
-            <div class="media block-6 services mb-md-0 mb-4">
-              <div class="icon bg-color-2 d-flex justify-content-center align-items-center mb-2">
-            		<span class="flaticon-diet"></span>
-              </div>
-              <div class="media-body">
-                <h3 class="heading">Always Fresh</h3>
-                <span>Product well package</span>
-              </div>
-            </div>
-          </div>
-          <div class="col-lg-3 text-center d-flex align-self-stretch ftco-animate">
-            <div class="media block-6 services mb-md-0 mb-4">
-              <div class="icon bg-color-3 d-flex justify-content-center align-items-center mb-2">
-            		<span class="flaticon-award"></span>
-              </div>
-              <div class="media-body">
-                <h3 class="heading">Superior Quality</h3>
-                <span>Quality Products</span>
-              </div>
-            </div>
-          </div>
-          <div class="col-lg-3 text-center d-flex align-self-stretch ftco-animate">
-            <div class="media block-6 services mb-md-0 mb-4">
-              <div class="icon bg-color-4 d-flex justify-content-center align-items-center mb-2">
-            		<span class="flaticon-customer-service"></span>
-              </div>
-              <div class="media-body">
-                <h3 class="heading">Support</h3>
-                <span>24/7 Support</span>
-              </div>
-            </div>
-          </div>
         </div>
-			</div>
-		</section>
+    </section>
 
 {% endblock %}
