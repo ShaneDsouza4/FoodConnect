@@ -5,6 +5,9 @@ from django.contrib import messages
 
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
+from django.utils.timezone import now
+
+from donations.models import Product
 from .forms import SignUpForm, CreateRestaurantForm, CreateFoodBankForm, CreateIndividualForm, EditRestaurantForm, \
     EditFoodBankForm, EditIndividualForm
 from django import forms
@@ -22,7 +25,8 @@ from datetime import datetime
 
 # Landing page view
 def landing_view(request):
-    return render(request, 'webpages/index.html')
+    products = Product.objects.filter(expiry_date__gte=now()).order_by('-date_created')[:8]
+    return render(request, 'webpages/index.html', {'products': products})
 
 def about_view(request):
     return render(request, 'webpages/about.html')

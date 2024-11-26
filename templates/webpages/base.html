@@ -29,6 +29,7 @@
     <link rel="stylesheet" href="{% static 'css/flaticon.css' %}">
     <link rel="stylesheet" href="{% static 'css/icomoon.css' %}">
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
+      
       <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
       
       <script>
@@ -85,6 +86,17 @@
         {% endblock %}
         
     <!-- Footer start -->
+        <section class="ftco-section img" style="background-image: url('{% static "images/bg_3.jpg" %}');">
+    	<div class="container">
+            <div class="row justify-content-end">
+                <div class="col-md-6 heading-section ftco-animate deal-of-the-day ftco-animate">
+                    <h2 class="mb-4">Let's Connect</h2>
+                    <p>Have questions or ideas? Reach out to us to learn more or collaborate.</p>
+                    <h3><a href="{% url 'contact_us' %}">Contact Us</a></h3>
+                </div>
+            </div>
+    	</div>
+    </section>
     <footer class="ftco-footer ftco-section">
       <div class="container">
       	<div class="row">

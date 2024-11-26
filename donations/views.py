@@ -195,7 +195,6 @@ def place_order(request):
     messages.error(request, "Invalid request.")
     return redirect('product_list')
 
-
 @login_required
 def view_reservations(request):
     #reservations = Reservation.objects.filter(product__donated_by=request.user).select_related('product')
@@ -204,10 +203,9 @@ def view_reservations(request):
 
 @login_required
 def donor_reservations(request):
-    # Get all products donated by the logged-in user
     donor_products = Product.objects.filter(donated_by=request.user)
 
-    # Get reservations for the donor's products
+    # Reservations for the donors products
     reservations = Reservation.objects.filter(product__in=donor_products)
 
     return render(request, 'donations/donor_reservations_list.html', {'reservations': reservations})
