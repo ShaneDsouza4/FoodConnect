@@ -13,6 +13,7 @@ class EmergencyAlert(models.Model):
 
 class Alert(models.Model):
     item_name = models.CharField(max_length=100)
+    original_quantity = models.PositiveIntegerField(default=0)
     quantity_needed = models.PositiveIntegerField()
     urgency_level = models.CharField(
         max_length=20,

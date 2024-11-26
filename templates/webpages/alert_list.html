@@ -8,9 +8,9 @@
         <div class="row no-gutters slider-text align-items-center justify-content-center">
           <div class="col-md-9 ftco-animate text-center">
           	<p class="breadcrumbs">
-                <span>View and Manage Requests for Assistance.</span>
+                <span>Monitor and manage assistance requests with ease.</span>
             </p>
-            <p class="mb-0 bread">Alert List</p>
+            <p class="mb-0 bread">Emergency Alert List</p>
           </div>
         </div>
       </div>
@@ -22,12 +22,15 @@
         <div class="row mb-5 pb-3">
             <div class="col-md-12">
                 <h2 class="mb-4 text-center">Alert List</h2>
-                
+                <p class="text-center">Stay informed and take prompt action by reviewing the latest assistance alerts in your community.</p>
                 <table class="table table-bordered table-striped">
                     <thead>
                         <tr>
                             <th>Food Bank Name</th>
                             <th>Item</th>
+                            {% if request.user.foodbank %}
+                                <th>Original Quantity</th>
+                            {% endif %}
                             <th>Quantity Needed</th>
                             <th>Description</th>
                             <th>Status</th>
@@ -39,26 +42,46 @@
                         <tr>
                             <td>{{ alert.created_by.username }}</td>
                             <td>{{ alert.item_name }}</td>
-                            <td>{{ alert.remaining_quantity_needed }}</td>
+                            {% if request.user.foodbank %}
+                                <td>{{ alert.original_quantity }}</td>
+                            {% endif %}
+                            <td>{{ alert.quantity_needed }}</td>
                             <td>{{ alert.description }}</td>
                             <td>
                                 <span class="badge 
-                                    {% if alert.response_status == 'pending' %} badge-warning
-                                    {% elif alert.response_status == 'in_progress' %} badge-primary
-                                    {% elif alert.response_status == 'completed' %} badge-success
-                                    {% endif %}">
-                                    {{ alert.response_status|capfirst }}
+                                        {% if alert.response_status == 'active' %} badge-warning
+                                        {% elif alert.response_status == 'completed' %} badge-success
+                                        {% endif %}">
+                                        {{ alert.response_status|capfirst }}
                                 </span>
                             </td>
                             <td>
-                                {% if not alert.hide_donate_button %}
-                                <a href="{% url 'respond_to_donation' alert.id %}" class="btn btn-primary">Donate</a>
+                                 {% if request.user.foodbank %}
+                                     <a href="{% url 'update_alert' alert.id %}" 
+                                        class="btn btn-primary
+                                        {% if alert.quantity_needed == 0 %} disabled {% endif %}"
+                                     >
+                                         Update
+                                     </a>
+                                     <a href="{% url 'delete_alert' alert.id %}" 
+                                        class="btn btn-danger {% if alert.quantity_needed == 0 %} disabled {% endif %}" 
+                                        onclick="return confirm('Are you sure you want to delete Alert?');"
+                                     >
+                                         Delete
+                                     </a>
+                                 {% else %}
+                                     <a href="{% url 'respond_to_donation' alert.id %}" 
+                                        class="btn btn-primary
+                                        {% if alert.quantity_needed == 0 %} disabled {% endif %}"
+                                     >
+                                         Contribute
+                                     </a>
                                 {% endif %}
                             </td>
                         </tr>
                         {% empty %}
                         <tr>
-                            <td colspan="6" class="text-center">No alerts available.</td>
+                            <td colspan="7" class="text-center">No alerts available.</td>
                         </tr>
                         {% endfor %}
                     </tbody>

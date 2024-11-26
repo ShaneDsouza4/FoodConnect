@@ -10040,3 +10040,8 @@ textarea.form-control {
     background-color: #218838;
     text-decoration: none;
 }
+
+.btn.disabled {
+    pointer-events: none;
+    opacity: 0.6;
+}

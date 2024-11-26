@@ -12,7 +12,12 @@
           	<p class="breadcrumbs">
                 <span>Reach out to donors and partners who can help your food bank today.</span>
             </p>
-            <p class="mb-0 bread">Submit an Alert for Assistance</p>
+              {% if alert %}
+                  <p class="mb-0 bread">Update Alert for Assistance</p>
+              {% else %}
+                  <p class="mb-0 bread">Submit an Alert for Assistance</p>
+              {% endif %}
+            
           </div>
         </div>
       </div>
@@ -23,15 +28,25 @@
       <div class="container">
         <div class="row mb-5 pb-3">
           <div class="col-md-6 offset-md-3">
-              <h2 class="mb-4">Please Submit your Request</h2>
-              <p>If your food bank is in need of specific items or resources, submit a detailed alert to notify donors. FoodConnect empowers you to connect with supporters quickly and efficiently, ensuring no one in your community goes without.</p>
+              {% if alert %}
+                  <h2 class="mb-4">Update Alert</h2>
+              {% else %}
+                  <h2 class="mb-4">Please Submit your Request</h2>
+                  <p>If your food bank is in need of specific items or resources, submit a detailed alert to notify donors. FoodConnect empowers you to connect with supporters quickly and efficiently, ensuring no one in your community goes without.</p>
+              {% endif %}
+              
           
-              <form method="post">
+              <form method="post" action="">
                 {% csrf_token %}
                 {{ form.as_p }}
-                <button type="submit" class="btn btn-primary">Submit Alert</button>
+                <button type="submit" class="btn btn-primary">
+                     {% if alert %} 
+                         Update Alert 
+                     {% else %} 
+                         Submit Alert 
+                     {% endif %}
+                </button>
               </form>
-
           </div>
         </div>
       </div>
