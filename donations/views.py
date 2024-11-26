@@ -11,8 +11,7 @@ from .forms import CreateDonationForm, AddProductForm
 from donations.models import Category, Product, Reservation
 
 
-# Create your views here.
-
+# View for List of all donations
 def donations_view(request):
     categories = Category.objects.all()
     category_id = request.GET.get('category_id')
@@ -25,13 +24,14 @@ def donations_view(request):
     page_obj = paginator.get_page(page_number)
     return render(request, '../templates/donations/donations.html', {'products':page_obj, 'categories': categories, 'page_obj': page_obj,'current_category': int(category_id) if category_id else None,})
 
-# views.py
+# View for single Product
 @login_required
 def product_view(request, product_id):
     product = get_object_or_404(Product, pk=product_id)
     related_products = Product.objects.filter(category=product.category).exclude(pk=product_id)
     return render(request, '../templates/donations/product_detail.html', {'product': product, 'related_products': related_products})
 
+# View to create a donation
 @login_required
 def create_donation(request):
     if request.method == 'POST':
@@ -89,6 +89,8 @@ def create_donation(request):
         form = AddProductForm()
 
     return render(request, 'donations/create_donation.html', {'form': form})
+
+#View for reserver to reserve the donation product
 @login_required
 def place_order(request):
     if request.method == 'POST':
@@ -190,17 +192,20 @@ def place_order(request):
                              'Reservation placed successfully, but we were unable to send email notifications.')
 
         #messages.success(request, "Reservation placed successfully!")
-        return render(request, '../templates/donations/reservations_list.html')
+        #return render(request, '../templates/donations/reservations_list.html')
+        return redirect('view_reservations')
 
     messages.error(request, "Invalid request.")
-    return redirect('product_list')
+    return redirect('donations')
 
+#View for reserver to see the donations the reserved
 @login_required
 def view_reservations(request):
     #reservations = Reservation.objects.filter(product__donated_by=request.user).select_related('product')
     reservations = Reservation.objects.filter(user=request.user).select_related('product')
     return render(request, '../templates/donations/reservations_list.html', {"reservations":reservations})
 
+#View for donor to see the reservations made against their donations
 @login_required
 def donor_reservations(request):
     donor_products = Product.objects.filter(donated_by=request.user)
@@ -210,16 +215,16 @@ def donor_reservations(request):
 
     return render(request, 'donations/donor_reservations_list.html', {'reservations': reservations})
 
-# Donations by donor
+# View for donor to see the donations they made
 @login_required
 def donor_donations(request):
-    # Fetch all donations made by the logged-in donor
     donations = Product.objects.filter(donated_by=request.user)
 
     return render(request, 'donations/donor_donations_list.html', {
         'donations': donations,
     })
 
+# View for donor to update the donations they made
 @login_required
 def update_donation(request, donation_id):
     donation = get_object_or_404(Product, id=donation_id, donated_by=request.user)
@@ -261,21 +266,15 @@ def update_donation(request, donation_id):
         'donation': donation,
     })
 
+#URL for donor to delete the donations they made
 @login_required
 def delete_donation(request, donation_id):
     donation = get_object_or_404(Product, id=donation_id, donated_by=request.user)
-    if request.method == 'POST':
-        donation.delete()
-        messages.success(request, "Donation deleted successfully!")
-        return redirect('donor_donations')
+    donation.delete()
+    messages.success(request, "Donation deleted successfully!")
+    return redirect('donor_donations')
 
-@login_required
-def reservations_for_donation(request, donation_id):
-    product = get_object_or_404(Product, id=donation_id, donated_by=request.user)
-    reservations = Reservation.objects.filter(product=product)
-
-    return render(request, 'donations/reservations_for_donation.html', {'product': product, 'reservations': reservations})
-
+#View for donor to make the reservation status,after the reserver reserves the donation
 @login_required
 def update_reservation_status(request, reservation_id):
     if request.method == 'POST':

@@ -51,16 +51,15 @@
                                   <td>{{ donation.unit }}</td>
                                   <td>{{ donation.expiry_date|date:"F j, Y" }}</td>
                                   <td>
-                                     <a href="{% url 'update-donation' donation.id %}" class="btn btn-warning btn-sm" style="border-radius: 20px; color: black; font-weight: bold; padding: 5px 15px;">
-                                        <i class="bi bi-pencil-square"></i> Update
+                                     <a href="{% url 'update-donation' donation.id %}" class="btn btn-warning">
+                                        Update
                                      </a>
-                                    <form method="post" action="{% url 'delete-donation' donation.id %}" style="display:inline;">
-                                        {% csrf_token %}
-                                        <button type="submit" class="btn btn-danger btn-sm" style="border-radius: 20px; color: black; font-weight: bold; padding: 5px 15px;" onclick="return confirm('Are you sure you want to delete this donation?');">
-                                            <i class="bi bi-trash"></i> Delete
-                                        </button>
-                                    </form>
-                                      <a href="{% url 'reservations_for_donation' donation.id %}" class="btn btn-info btn-sm">View Reservations</a>
+                                      <a href="{% url 'delete-donation' donation.id %}" 
+                                        class="btn btn-danger" 
+                                        onclick="return confirm('Are you sure you want to delete Donation?');"
+                                     >
+                                         Delete
+                                     </a>
                                   </td>
 						      </tr>
                             {% endfor %}

@@ -1,39 +1,47 @@
 <nav class="navbar navbar-expand-lg navbar-dark ftco_navbar bg-dark ftco-navbar-light" id="ftco-navbar">
     <div class="container">
+        <!-- Brand Logo -->
         <a class="navbar-brand" href="{% url 'landing' %}">FoodConnect</a>
+
+        <!-- Hamburger Menu for Mobile View -->
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#ftco-nav" aria-controls="ftco-nav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="oi oi-menu"></span> Menu
         </button>
 
+        <!-- Navbar Items -->
         <div class="collapse navbar-collapse" id="ftco-nav">
-            <ul class="navbar-nav ml-auto">
+            <ul class="navbar-nav ml-auto align-items-center">
                 <li class="nav-item active"><a href="{% url 'landing' %}" class="nav-link">Home</a></li>
                 <li class="nav-item"><a class="nav-link" href="{% url 'about' %}">About</a></li>
                 <li class="nav-item"><a class="nav-link" href="{% url 'contact_us' %}">Contact</a></li>
-                <li class="nav-item"><a class="nav-link" href="{% url 'donations' %}">Donations</a></li>
-
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="{% url 'donations' %}" id="dropdown04" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">DonationsX</a>
+                    <a class="nav-link dropdown-toggle" href="{% url 'donations' %}" id="dropdown04" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Donations</a>
                     <div class="dropdown-menu" aria-labelledby="dropdown04">
-                            <a class="dropdown-item" href="{% url 'donations' %}">All Donations</a>
-                            <a class="dropdown-item" href="{% url 'donor_donations' %}">Your Donations</a>
-                            <a class="dropdown-item" href="{% url 'donor_reservations' %}">Reservations for Your Donations</a>
+                        <a class="dropdown-item" href="{% url 'donations' %}">All Donations</a>
+                        {% if request.user.is_authenticated %}
+                            {% if request.user.restaurant_profile or request.user.profile %}
+                                <a class="dropdown-item" href="{% url 'donor_donations' %}">Your Donations</a>
+                                <a class="dropdown-item" href="{% url 'donor_reservations' %}">Reservations for Your Donations</a>
+                            {% endif %}
+                        {% endif %}
                     </div>
                 </li>
-
                 <li class="nav-item"><a class="nav-link" href="{% url 'analytics' %}">Analytics</a></li>
                 <li class="nav-item"><a class="nav-link" href="{% url 'alert_list' %}">Alerts</a></li>
-
                 {% if user.is_authenticated %}
-                                    <li class="nav-item"><a class="nav-link" href="{% url 'view_reservations' %}">Reservations</a></li>
-
-                    <li class="nav-item"><a class="nav-link" href="{% url 'user_profile' %}">Profile</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}">Logout</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'view_reservations' %}">Reservations</a></li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="dropdownProfile" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Profile</a>
+                        <div class="dropdown-menu" aria-labelledby="dropdownProfile">
+                            <a class="dropdown-item" href="{% url 'user_profile' %}">View Profile</a>
+                            <a class="dropdown-item" href="{% url 'logout' %}">Logout</a>
+                        </div>
+                    </li>
                 {% else %}
                     <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">Login</a></li>
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="dropdown04" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Sign Up</a>
-                        <div class="dropdown-menu" aria-labelledby="dropdown04">
+                        <a class="nav-link dropdown-toggle" href="#" id="dropdownSignup" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Sign Up</a>
+                        <div class="dropdown-menu" aria-labelledby="dropdownSignup">
                             <a class="dropdown-item" href="{% url 'restaurant_signup' %}">Restaurant</a>
                             <a class="dropdown-item" href="{% url 'foodbank_signup' %}">Food Bank</a>
                             <a class="dropdown-item" href="{% url 'individual_signup' %}">Individual</a>
@@ -41,21 +49,20 @@
                     </li>
                 {% endif %}
 
-                <!-- Cart  -->
-                <!-- <li class="nav-item cta cta-colored">
-                    <a class="nav-link"><span class="icon-shopping_cart"></span>[0]</a>
-                </li> -->
-            
-                <!-- Alerts Button -->
-                <li class="nav-item">
-                    {% if request.user.is_authenticated and request.user.foodbank %}
-                        <a href="{% url 'alerts' %}" class="nav-link btn btn-danger text-white m-2">Add Alert +</a>
-                     {% endif %}
-
-                    {% if request.user.is_authenticated and not request.user.foodbank %}
-                        <a href="{% url 'create-donation' %}" class="nav-link btn btn-danger text-white m-2">Add Donation</a>
-                     {% endif %}
-                </li>
+                <!-- Donate or Add Alert Button -->
+                {% if request.user.is_authenticated %}
+                    <li class="nav-item ml-3">
+                        {% if request.user.foodbank %}
+                            <a href="{% url 'alerts' %}" class="btn btn-danger btn-sm text-white">
+                                Alert
+                            </a>
+                        {% else %}
+                            <a href="{% url 'create-donation' %}" class="btn btn-danger btn-sm text-white">
+                                Donate
+                            </a>
+                        {% endif %}
+                    </li>
+                {% endif %}
             </ul>
         </div>
     </div>

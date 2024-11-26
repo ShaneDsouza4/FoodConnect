@@ -12,15 +12,15 @@
         </div>
       </div>
     </div>
- <section class="ftco-section ftco-cart">
-			<div class="container">
-				<div class="row">
+    <section class="ftco-section testimony-section">
+        <div class="container">
+            <div class="row">
     			<div class="col-md-12 ftco-animate">
     				<div class="cart-list">
                         {% if reservations %}
 	    				<table class="table">
 						    <thead class="thead-primary">
-						      <tr class="text-center">
+						        <tr class="text-center">
                                   <th>Reservation ID</th>
                                   <th>Product</th>
                                   <th>Reserver</th>
@@ -33,30 +33,32 @@
 						    <tbody>
                             {% for reservation in reservations %}
 						      <tr class="text-center">
-                                 <td>{{ reservation.id }}</td>
-                                <td>{{ reservation.product.name }}</td>
-                                <td>{{ reservation.user.get_full_name|default:reservation.user.username }}</td>
-                                <td>{{ reservation.quantity }}</td>
-                                <td><span class="badge 
-                    {% if reservation.status == 'active' %} badge-success
-                    {% elif reservation.status == 'completed' %} badge-secondary
-                    {% elif reservation.status == 'canceled' %} badge-danger
-                    {% endif %}
-                  ">
-                    {{ reservation.get_status_display }}
-                  </span></td>
-                                <td>{{ reservation.date_reserved|date:"F j, Y, g:i a" }}</td>
-                                <td>
-                                    <form method="post" action="{% url 'update_reservation_status' reservation.id %}">
+                                  <td>{{ reservation.id }}</td>
+                                  <td>{{ reservation.product.name }}</td>
+                                  <td>{{ reservation.user.get_full_name|default:reservation.user.username }}</td>
+                                  <td>{{ reservation.quantity }}</td>
+                                  <td>
+                                        <span class="badge 
+                                            {% if reservation.status == 'active' %} badge-success
+                                            {% elif reservation.status == 'completed' %} badge-secondary
+                                            {% elif reservation.status == 'canceled' %} badge-danger
+                                            {% endif %}
+                                        ">
+                                            {{ reservation.get_status_display }}
+                                        </span>
+                                  </td>
+                                  <td>{{ reservation.date_reserved|date:"F j, Y, g:i a" }}</td>
+                                  <td>
+                                      <form method="post" action="{% url 'update_reservation_status' reservation.id %}">
                                         {% csrf_token %}
-                                        <select name="status" class="form-control form-control-sm">
+                                        <select name="status">
                                             <option value="active" {% if reservation.status == 'active' %}selected{% endif %}>Active</option>
                                             <option value="completed" {% if reservation.status == 'completed' %}selected{% endif %}>Completed</option>
                                             <option value="canceled" {% if reservation.status == 'canceled' %}selected{% endif %}>Canceled</option>
                                         </select>
-                                        <button type="submit" class="btn btn-primary btn-sm mt-2">Update</button>
-                                    </form>
-                                </td>
+                                        <button type="submit" class="btn btn-primary">Update</button>
+                                        </form>
+                                  </td>
 						      </tr>
                             {% endfor %}
 						    </tbody>
@@ -69,5 +71,4 @@
     		</div>
 			</div>
 		</section>
-
 {% endblock %}

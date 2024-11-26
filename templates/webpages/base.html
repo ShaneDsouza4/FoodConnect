@@ -55,7 +55,11 @@
 						    <span class="text">Connecting Communities</span>
 					    </div>
 					    <div class="col-md pr-4 d-flex topper align-items-center">
-						    <span class="text">Promoting Sustainability</span>
+						    {% if request.user.is_authenticated %}
+                                <span class="text">Welcome, {{ request.user.username }}</span>
+                            {% else %}
+                                <span class="text">Promoting Sustainability</span>
+                            {% endif %}
 					    </div>
 					    <div class="col-md-5 pr-4 d-flex topper align-items-center">
 						    <span class="text">Turning Leftovers into Lifelines</span>
