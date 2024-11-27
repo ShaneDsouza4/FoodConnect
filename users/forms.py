@@ -72,7 +72,7 @@ class CreateRestaurantForm(forms.Form):
         widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Email Address'})
     )
     street = forms.CharField(
-        label="Street Address",
+        label="Street Address (Shipping Accessible)",
         max_length=255,
         widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Street'})
     )

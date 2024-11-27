@@ -182,8 +182,8 @@ def place_order(request):
 
         try:
             # Send emails
-            send_mail(subject, message_to_donor, 'no-reply@foodconnect.com', [donor_email])
-            send_mail(subject, message_to_reserver, 'no-reply@foodconnect.com', [reserver_email])
+            #send_mail(subject, message_to_donor, 'no-reply@foodconnect.com', [donor_email])
+            #send_mail(subject, message_to_reserver, 'no-reply@foodconnect.com', [reserver_email])
             messages.success(request,
                              'Reservation placed successfully! Emails have been sent to the donor and yourself.')
         except Exception as e:

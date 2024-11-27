@@ -202,8 +202,8 @@ def ResponseToDonationView(request, alert_id):
             )
 
             try:
-                send_email(subject, message_to_foodbank, [foodbank_email])
-                send_email(subject, message_to_donor, [donor_email])
+                #send_email(subject, message_to_foodbank, [foodbank_email])
+                #send_email(subject, message_to_donor, [donor_email])
                 messages.success(request,
                                  'Your response to the donation has been submitted successfully, and emails have been sent.')
             except Exception as e:
