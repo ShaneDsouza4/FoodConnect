@@ -67,13 +67,12 @@
                                     </div>
                                     <div class="card-footer d-flex align-items-center justify-content-center">
                                         <h4 class="small text-white stretched-link">{{ top_individual_donor_name }}</h4>
-                                        <i class="fas fa-angle-right"></i>
                                     </div>
                                 </div>
                             </div>
-
-                             <!-- #1 Ranked Donor Card -->
-                             <div class="col-xl-3 col-md-6">
+                        
+                            <!-- #1 Ranked Donor Card -->
+                            <div class="col-xl-3 col-md-6">
                                 <div class="card bg-warning text-white mb-4">
                                     <div class="card-body text-center">
                                         <img src="{% static 'images/trophy.png' %}" alt="Trophy" style="width: 50px; height: auto;">
@@ -81,11 +80,10 @@
                                     </div>
                                     <div class="card-footer d-flex align-items-center justify-content-center">
                                         <h4 class="small text-white stretched-link" style="font-weight: bold;">{{ top_donor_name }}</h4>
-                                        <i class="fas fa-angle-right"></i>
                                     </div>
                                 </div>
                             </div>
-
+                        
                             <!-- #1 Ranked Restaurant Card -->
                             <div class="col-xl-3 col-md-6">
                                 <div class="card bg-info text-white mb-4">
@@ -95,11 +93,10 @@
                                     </div>
                                     <div class="card-footer d-flex align-items-center justify-content-center">
                                         <h4 class="small text-white stretched-link">{{ top_restaurant_donor_name }}</h4>
-                                        <i class="fas fa-angle-right"></i>
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </div>                        
 
                         <div class="card mb-4">
                             <div class="card-header">
@@ -117,6 +114,7 @@
                                             <th>Variety</th>
                                             <th>Volume</th>
                                             <th>Response to Emergency</th>
+                                            <th>Score</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -129,6 +127,7 @@
                                             <td>{{ donator.donation_variety_count}}</td>
                                             <td>{{ donator.donation_volume}}</td>
                                             <td>{{ donator.response_to_emergency_count}}</td>
+                                            <td>{{ donator.score_out_of_100|floatformat:0 }}</td>
                                         </tr>
                                         {% endfor %}
                                     </tbody>
