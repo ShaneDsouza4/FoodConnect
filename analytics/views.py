@@ -208,6 +208,9 @@ def rank_donators(data):
     features = ['total_donations', 'donation_frequency', 'donation_variety_count',
                 'donation_volume', 'average_rating', 'response_to_emergency_count']
 
+    # Preserve raw data for output
+    raw_data = data.copy()
+
     # Ensure model and scaler are available; if not, train them
     if not os.path.exists('rank_model.pkl') or not os.path.exists('scaler.pkl'):
         print("Model or scaler not found. Training the model...")
@@ -224,12 +227,9 @@ def rank_donators(data):
 
     # Predict scores
     data['predicted_score'] = model.predict(data[features])
-
-    # Use robust scaling for `score_out_of_100`
     min_percentile = data['predicted_score'].quantile(0.05)
     max_percentile = data['predicted_score'].quantile(0.95)
 
-    # Avoid division by zero
     if max_percentile - min_percentile == 0:
         data['score_out_of_100'] = 0
     else:
@@ -241,11 +241,16 @@ def rank_donators(data):
     # Cap scores between 0 and 100
     data['score_out_of_100'] = data['score_out_of_100'].clip(lower=0, upper=100)
 
+    # Add raw data back to the ranked DataFrame for display
+    data = pd.concat([raw_data, data[['predicted_score', 'score_out_of_100']]], axis=1)
+
     # Rank donors by `score_out_of_100`
     ranked_data = data.sort_values(by='score_out_of_100', ascending=False).head(10)
-    return ranked_data
 
-
+    # Return the required fields
+    return ranked_data[['name', 'total_donations', 'donation_volume', 'donation_frequency', 
+                        'donation_variety_count', 'response_to_emergency_count', 
+                        'predicted_score', 'score_out_of_100']].to_dict(orient='records')
 
 def get_donation_data_by_type():
     individual_donations = Profile.objects.aggregate(total=Sum('total_donations'))['total'] or 0
@@ -393,12 +398,12 @@ def analytics_view(request):
         'funds_raised': funds_raised,
         'progress_to_yearly_target': progress_to_yearly_target,
         'total_donors': total_donors,
-        'ranked_donators': ranked_data[['name', 'total_donations', 'donation_volume', 'score_out_of_100']].to_dict(orient='records'),
-        'ranked_individual_donators': individual_ranked_data[['name', 'total_donations', 'donation_volume', 'score_out_of_100']].to_dict(orient='records'),
-        'ranked_restaurant_donators': restaurant_ranked_data[['name', 'total_donations', 'donation_volume', 'score_out_of_100']].to_dict(orient='records'),
-        'top_donor_name': ranked_data.iloc[0]['name'] if not ranked_data.empty else "No Donors",
-        'top_individual_donor_name': individual_ranked_data.iloc[0]['name'] if not individual_ranked_data.empty else "No Donors",
-        'top_restaurant_donor_name': restaurant_ranked_data.iloc[0]['name'] if not restaurant_ranked_data.empty else "No Donors",
+        'ranked_donators': ranked_data,
+        'ranked_individual_donators': individual_ranked_data,
+        'ranked_restaurant_donators': restaurant_ranked_data,
+        'top_donor_name': ranked_data[0]['name'] if ranked_data else "No Donors",
+        'top_individual_donor_name': individual_ranked_data[0]['name'] if individual_ranked_data else "No Donors",
+        'top_restaurant_donor_name': restaurant_ranked_data[0]['name'] if restaurant_ranked_data else "No Donors",
         'total_volume': all_data['donation_volume'].sum(),
         'pie_chart_data': pie_chart_data,
         'response_emergency_data': response_emergency_json,
