@@ -109,12 +109,12 @@
                                         <tr>
                                             <th>Rank No.</th>
                                             <th>Name</th>
+                                            <th>Score</th>
                                             <th>Donations</th>
                                             <th>Frequency</th>
                                             <th>Variety</th>
                                             <th>Volume</th>
                                             <th>Response to Emergency</th>
-                                            <th>Score</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -122,12 +122,12 @@
                                         <tr>
                                             <td>{{ forloop.counter }}</td>
                                             <td>{{ donator.name }}</td>
+                                            <td>{{ donator.score_out_of_100|floatformat:0 }}</td>
                                             <td>{{ donator.total_donations}}</td>
                                             <td>{{ donator.donation_frequency}}</td>
                                             <td>{{ donator.donation_variety_count}}</td>
                                             <td>{{ donator.donation_volume}}</td>
                                             <td>{{ donator.response_to_emergency_count}}</td>
-                                            <td>{{ donator.score_out_of_100|floatformat:0 }}</td>
                                         </tr>
                                         {% endfor %}
                                     </tbody>
@@ -182,7 +182,7 @@
                             <!-- Response to Emergency Count by Donor Type -->
                             <div class="col-xl-6">
                                 <div class="card mb-4">
-                                    <div class="card-header"><i class="fas fa-chart-donut me-1"></i> Response to Emergency Count by Donor Type (Donut Chart)</div>
+                                    <div class="card-header"><i class="fas fa-chart-donut me-1"></i> Response to Emergency Count by Donor Type</div>
                                     <div class="card-body">
                                         <canvas id="responseToEmergencyDonutChart"></canvas>
                                     </div>
